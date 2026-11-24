@@ -2,8 +2,13 @@
 <html lang="ru" data-theme="light">
 <head>
 <meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<meta name="theme-color" content="#ffffff"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<meta name="theme-color" content="#16a34a"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+<meta name="apple-mobile-web-app-title" content="CoffeeIT"/>
+<link rel="apple-touch-icon" sizes="180x180" href="icon-180.png"/>
+<link rel="manifest" href="manifest.webmanifest"/>
 <title>CoffeeIT — доска объявлений: купить, продать, договориться</title>
 <meta name="description" content="CoffeeIT — бесплатная доска объявлений. Размещайте товары, переписывайтесь с покупателями, договаривайтесь о встрече, доставке или перевозке."/>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%2316a34a'/%3E%3Ctext x='50' y='70' font-size='58' font-weight='bold' text-anchor='middle' fill='%23fff'%3EC%3C/text%3E%3C/svg%3E"/>
@@ -268,6 +273,53 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 main:focus{outline:none}
 @media (prefers-reduced-motion: reduce){*{animation-duration:.01ms !important;transition-duration:.01ms !important}}
 
+/* ---- Адаптация под планшеты (iPad), телефоны и iPhone ---- */
+html,body{overflow-x:hidden;-webkit-text-size-adjust:100%}
+body{
+  padding-bottom:env(safe-area-inset-bottom, 0px);
+}
+.header{
+  padding-top:env(safe-area-inset-top, 0px);
+}
+a,button,.btn,.icon-btn{
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+}
+
+/* Планшеты (iPad и др.) */
+@media (max-width: 1024px){
+  .container{padding-left:16px;padding-right:16px}
+  .header-inner{flex-wrap:wrap;gap:10px;padding-top:10px;padding-bottom:10px;height:auto}
+  .search{order:3;flex:1 1 100%;max-width:none}
+  .grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+
+/* Телефоны и iPhone */
+@media (max-width: 640px){
+  :root{--header-h:auto}
+  .container{padding-left:12px;padding-right:12px}
+  .header-inner{gap:8px;padding-top:8px;padding-bottom:8px}
+  .logo-text small{display:none}
+  .header-actions{gap:6px}
+  .btn,.icon-btn{min-height:44px}
+  .btn-post span{display:none}
+  .btn-post{padding-left:12px;padding-right:12px}
+  /* Предотвращаем авто-зум Safari на iPhone при фокусе в поля ввода */
+  input,select,textarea{font-size:16px !important}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .card-pad{padding:14px}
+  .hero{padding:18px 14px}
+  .hero h1{font-size:22px;line-height:1.25}
+  .footer-inner{flex-direction:column;align-items:flex-start;gap:12px}
+  .footer-links{flex-wrap:wrap;gap:10px}
+  .modal{width:calc(100vw - 24px);max-height:calc(100dvh - 32px);overflow-y:auto;-webkit-overflow-scrolling:touch}
+}
+
+/* Узкие экраны (iPhone SE и др.) */
+@media (max-width: 380px){
+  .grid{grid-template-columns:1fr}
+}
+
 </style>
 <script>
 (function () {
@@ -350,6 +402,10 @@ main:focus{outline:none}
       <a href="/chats" data-link>Сообщения</a>
       <a href="/deals" data-link>Сделки</a>
       <a href="/favorites" data-link>Избранное</a>
+      <button type="button" class="btn btn-sm" data-install-ios style="gap:6px">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M16.365 1.43c0 1.14-.493 2.27-1.177 3.08-.744.9-1.99 1.57-2.987 1.57-.12 0-.23-.02-.3-.03-.01-.06-.04-.22-.04-.39 0-1.15.572-2.27 1.206-2.98.804-.94 2.142-1.64 3.248-1.68.03.13.05.28.05.43zm4.565 15.71c-.03.07-.463 1.58-1.518 3.12-.945 1.34-1.94 2.71-3.43 2.71-1.517 0-1.9-.88-3.63-.88-1.698 0-2.302.91-3.67.91-1.377 0-2.332-1.26-3.428-2.8-1.287-1.82-2.323-4.63-2.323-7.28 0-4.28 2.797-6.55 5.552-6.55 1.448 0 2.675.95 3.6.95.865 0 2.222-1.01 3.902-1.01.613 0 2.886.06 4.374 2.19-.13.09-2.383 1.37-2.383 4.19 0 3.26 2.854 4.42 2.955 4.45z"/></svg>
+        <span>Скачать для iOS</span>
+      </button>
     </div>
   </div>
 </footer>
@@ -2685,8 +2741,80 @@ if (typeof window.EventSource === 'function') {
     });
   }
 
+  /* ---- установка приложения на iOS (iPhone / iPad) и PWA ---- */
+  let deferredInstallPrompt = null;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredInstallPrompt = e;
+  });
+
+  function openInstallIosModal() {
+    const ua = navigator.userAgent || '';
+    const isIOS = /iPhone|iPad|iPod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+
+    if (isStandalone) {
+      return toast('Приложение CoffeeIT уже установлено на вашем устройстве!');
+    }
+
+    if (deferredInstallPrompt && !isIOS) {
+      deferredInstallPrompt.prompt();
+      deferredInstallPrompt.userChoice.finally(() => { deferredInstallPrompt = null; });
+      return;
+    }
+
+    const appUrl = location.origin + (window.__BASE_PATH__ || '') + '/';
+    openModal({
+      title: 'Установить приложение CoffeeIT для iOS',
+      body: `
+        <div style="display:flex;flex-direction:column;gap:12px;font-size:14px;line-height:1.5">
+          <div style="display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;background:var(--bg2)">
+            <div style="width:48px;height:48px;border-radius:12px;background:#16a34a;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:24px;flex-shrink:0">C</div>
+            <div>
+              <b>CoffeeIT для iPhone и iPad</b>
+              <div class="small muted">Работает как обычное iOS-приложение на рабочем столе — без App Store и без адресной строки.</div>
+            </div>
+          </div>
+          <ol style="padding-left:20px;display:flex;flex-direction:column;gap:6px">
+            <li>Откройте этот сайт в браузере <b>Safari</b> на iPhone или iPad.</li>
+            <li>Нажмите кнопку <b>«Поделиться»</b> (квадрат со стрелкой вверх) внизу экрана.</li>
+            <li>Выберите пункт <b>«На экран „Домой“»</b> → <b>«Добавить»</b>.</li>
+          </ol>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
+            ${navigator.share ? '<button type="button" class="btn btn-primary" id="ios-share-btn" style="flex:1">Открыть меню «Поделиться»</button>' : ''}
+            <button type="button" class="btn" id="ios-copy-btn" style="flex:1">Скопировать ссылку</button>
+          </div>
+        </div>`,
+      onMount: (root) => {
+        const shareBtn = root.querySelector('#ios-share-btn');
+        if (shareBtn && navigator.share) {
+          shareBtn.onclick = () => navigator.share({ title: 'CoffeeIT', text: 'Доска объявлений CoffeeIT', url: appUrl }).catch(() => {});
+        }
+        const copyBtn = root.querySelector('#ios-copy-btn');
+        if (copyBtn) {
+          copyBtn.onclick = async () => {
+            try {
+              await navigator.clipboard.writeText(appUrl);
+              toast('Ссылка скопирована — откройте её в Safari на iPhone');
+            } catch (e) {
+              toast(appUrl);
+            }
+          };
+        }
+      },
+      actions: [{ label: 'Закрыть', onClick: (close) => close() }],
+    });
+  }
+
   // Глобальный делегированный обработчик (для карточек, отрисованных позже)
   document.addEventListener('click', async (e) => {
+    const iosBtn = e.target.closest('[data-install-ios]');
+    if (iosBtn) {
+      e.preventDefault();
+      openInstallIosModal();
+      return;
+    }
+
     const priv = e.target.closest('[data-open-privacy]');
     if (priv) {
       e.preventDefault();
