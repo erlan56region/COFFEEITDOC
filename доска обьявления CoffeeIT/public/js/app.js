@@ -901,8 +901,34 @@
     });
   }
 
+  function openStoriesDevModal() {
+    openModal({
+      title: 'Сторис CoffeeIT — в разработке',
+      body: `
+        <div style="display:flex;flex-direction:column;gap:12px;font-size:14px;line-height:1.55">
+          <div style="padding:12px 14px;border-radius:12px;background:linear-gradient(135deg,rgba(245,133,41,.12),rgba(221,42,123,.12),rgba(129,52,175,.12));border:1px solid rgba(221,42,123,.25)">
+            <b>Функция находится в разработке</b> — скоро в CoffeeIT появятся полноценные сторис в формате Instagram!
+          </div>
+          <ul style="padding-left:20px;display:flex;flex-direction:column;gap:6px">
+            <li><b>📸 Фото и видео:</b> публикация фото и коротких видео-обзоров товаров прямо с телефона или компьютера.</li>
+            <li><b>👁 Просмотры:</b> счётчик просмотров каждой сторис в реальном времени.</li>
+            <li><b>❤️ Лайки:</b> реакции покупателей и быстрый переход к вашему объявлению.</li>
+            <li><b>📊 Статистика в личном кабинете:</b> сводка по просмотрам, лайкам и активности за день и неделю.</li>
+          </ul>
+        </div>`,
+      actions: [{ label: 'Отлично, ждём!', primary: true, onClick: (close) => close() }],
+    });
+  }
+
   // Глобальный делегированный обработчик (для карточек, отрисованных позже)
   document.addEventListener('click', async (e) => {
+    const storiesBtn = e.target.closest('[data-stories-dev]');
+    if (storiesBtn) {
+      e.preventDefault();
+      openStoriesDevModal();
+      return;
+    }
+
     const iosBtn = e.target.closest('[data-install-ios]');
     if (iosBtn) {
       e.preventDefault();
