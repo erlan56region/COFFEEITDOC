@@ -319,6 +319,107 @@ async function api(req, res, pathname, query) {
     }
   }
 
+  /* --- платное продвижение в ТОП (100 ₽ — реальная оплата через ЮKassa: СБП / карта) --- */
+  if (resource === 'promo') {
+    const shopId = process.env.YOOKASSA_SHOP_ID || '';
+    const secretKey = process.env.YOOKASSA_SECRET_KEY || '';
+    const ykAuth = shopId && secretKey ? 'Basic ' + Buffer.from(`${shopId}:${secretKey}`).toString('base64') : '';
+
+    if (a1 === 'create' && method === 'POST') {
+      needUser();
+      const b = await readBody(req);
+      const adId = b.adId ? String(b.adId) : null;
+      const adTitle = String(b.adTitle || 'Объявление').trim().slice(0, 120);
+      const payMethod = b.method === 'card' ? 'bank_card' : 'sbp';
+      if (!ykAuth) {
+        return json(res, 503, {
+          error: 'Платёжный шлюз СБП (ЮKassa) не настроен на сервере. Задайте YOOKASSA_SHOP_ID и YOOKASSA_SECRET_KEY.',
+          configured: false,
+        });
+      }
+      const proto = req.headers['x-forwarded-proto'] || 'https';
+      const host = req.headers['x-forwarded-host'] || req.headers.host;
+      const idempotenceKey = crypto.randomUUID ? crypto.randomUUID() : crypto.randomBytes(16).toString('hex');
+      const ykRes = await fetch('https://api.yookassa.ru/v3/payments', {
+        method: 'POST',
+        headers: {
+          'Authorization': ykAuth,
+          'Idempotence-Key': idempotenceKey,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          amount: { value: '100.00', currency: 'RUB' },
+          capture: true,
+          payment_method_data: { type: payMethod },
+          confirmation: {
+            type: 'redirect',
+            return_url: `${proto}://${host}/me?promo_check=${encodeURIComponent(idempotenceKey)}`,
+          },
+          description: `Продвижение в ТОП (7 дней): ${adTitle}`,
+          metadata: { userId: user.id, adId: adId || '', adTitle, orderKey: idempotenceKey },
+        }),
+      });
+      const ykData = await ykRes.json().catch(() => ({}));
+      if (!ykRes.ok || !ykData.id) {
+        return json(res, 502, { error: ykData.description || 'Ошибка создания платежа в ЮKassa' });
+      }
+      const d = db();
+      if (!Array.isArray(d.promos)) d.promos = [];
+      d.promos.unshift({
+        id: ykData.id,
+        orderKey: idempotenceKey,
+        userId: user.id,
+        adId,
+        adTitle,
+        method: payMethod === 'bank_card' ? 'card' : 'sbp',
+        amount: 100,
+        status: 'pending',
+        createdAt: Date.now(),
+      });
+      save();
+      return json(res, 200, {
+        configured: true,
+        paymentId: ykData.id,
+        confirmationUrl: ykData.confirmation && ykData.confirmation.confirmation_url,
+      });
+    }
+
+    if (a1 === 'webhook' && method === 'POST') {
+      const event = await readBody(req).catch(() => ({}));
+      const obj = event && event.object;
+      if (ykAuth && obj && obj.id) {
+        // Проверяем статус платежа напрямую в ЮKassa (защита от поддельных вебхуков)
+        const checkRes = await fetch(`https://api.yookassa.ru/v3/payments/${encodeURIComponent(obj.id)}`, {
+          headers: { 'Authorization': ykAuth },
+        });
+        const payment = await checkRes.json().catch(() => ({}));
+        if (payment && payment.status === 'succeeded') {
+          const d = db();
+          if (!Array.isArray(d.promos)) d.promos = [];
+          const order = d.promos.find(p => p.id === payment.id);
+          if (order) {
+            order.status = 'paid';
+            order.paidAt = Date.now();
+            order.promotedUntil = Date.now() + 7 * 24 * 60 * 60 * 1000;
+          }
+          if (order && order.adId) {
+            const ad = d.ads.find(a => a.id === order.adId);
+            if (ad) ad.promotedUntil = order.promotedUntil;
+          }
+          save();
+        }
+      }
+      return json(res, 200, { ok: true });
+    }
+
+    if (a1 === 'my' && method === 'GET') {
+      needUser();
+      const d = db();
+      const list = Array.isArray(d.promos) ? d.promos.filter(p => p.userId === user.id) : [];
+      return json(res, 200, { items: list });
+    }
+  }
+
   /* --- профиль --- */
   if (resource === 'me') {
     if (method === 'GET') {
