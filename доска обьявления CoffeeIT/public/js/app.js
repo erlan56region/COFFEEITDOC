@@ -903,18 +903,35 @@
 
   function openStoriesDevModal() {
     openModal({
-      title: 'Сторис CoffeeIT — в разработке',
+      title: 'Сторис CoffeeIT',
       body: `
-        <div style="display:flex;flex-direction:column;gap:12px;font-size:14px;line-height:1.55">
-          <div style="padding:12px 14px;border-radius:12px;background:linear-gradient(135deg,rgba(245,133,41,.12),rgba(221,42,123,.12),rgba(129,52,175,.12));border:1px solid rgba(221,42,123,.25)">
-            <b>Функция находится в разработке</b> — скоро в CoffeeIT появятся полноценные сторис в формате Instagram!
+        <div style="display:flex;flex-direction:column;gap:14px;font-size:14px;line-height:1.5">
+          <div style="padding:16px;border-radius:14px;color:#fff;background:linear-gradient(135deg,#f58529 0%,#dd2a7b 55%,#8134af 100%);box-shadow:0 8px 24px rgba(221,42,123,.28)">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+              <span class="dev-dot"></span>
+              <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;opacity:.92">В разработке</span>
+            </div>
+            <div style="font-size:17px;font-weight:800;margin-bottom:4px">Сторис в формате Instagram</div>
+            <div style="font-size:13px;opacity:.92">Показывайте товары вживую — короткие видео и фото прямо в ленте CoffeeIT.</div>
           </div>
-          <ul style="padding-left:20px;display:flex;flex-direction:column;gap:6px">
-            <li><b>📸 Фото и видео:</b> публикация фото и коротких видео-обзоров товаров прямо с телефона или компьютера.</li>
-            <li><b>👁 Просмотры:</b> счётчик просмотров каждой сторис в реальном времени.</li>
-            <li><b>❤️ Лайки:</b> реакции покупателей и быстрый переход к вашему объявлению.</li>
-            <li><b>📊 Статистика в личном кабинете:</b> сводка по просмотрам, лайкам и активности за день и неделю.</li>
-          </ul>
+          <div class="story-feat-grid">
+            <div class="story-feat">
+              <b>Фото и видео</b>
+              <span class="muted">Загрузка фото и коротких видео-обзоров прямо с iPhone, Android или ПК.</span>
+            </div>
+            <div class="story-feat">
+              <b>Просмотры</b>
+              <span class="muted">Точный счётчик просмотров каждой сторис в реальном времени.</span>
+            </div>
+            <div class="story-feat">
+              <b>Лайки и реакции</b>
+              <span class="muted">Быстрые лайки от покупателей и мгновенный переход к объявлению.</span>
+            </div>
+            <div class="story-feat">
+              <b>Статистика в кабинете</b>
+              <span class="muted">Отдельная аналитика просмотров, лайков и активности в личном кабинете.</span>
+            </div>
+          </div>
         </div>`,
       actions: [{ label: 'Отлично, ждём!', primary: true, onClick: (close) => close() }],
     });
