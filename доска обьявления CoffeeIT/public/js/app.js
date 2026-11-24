@@ -836,8 +836,80 @@
     });
   }
 
+  /* ---- установка приложения на iOS (iPhone / iPad) и PWA ---- */
+  let deferredInstallPrompt = null;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredInstallPrompt = e;
+  });
+
+  function openInstallIosModal() {
+    const ua = navigator.userAgent || '';
+    const isIOS = /iPhone|iPad|iPod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+
+    if (isStandalone) {
+      return toast('Приложение CoffeeIT уже установлено на вашем устройстве!');
+    }
+
+    if (deferredInstallPrompt && !isIOS) {
+      deferredInstallPrompt.prompt();
+      deferredInstallPrompt.userChoice.finally(() => { deferredInstallPrompt = null; });
+      return;
+    }
+
+    const appUrl = location.origin + (window.__BASE_PATH__ || '') + '/';
+    openModal({
+      title: 'Установить приложение CoffeeIT для iOS',
+      body: `
+        <div style="display:flex;flex-direction:column;gap:12px;font-size:14px;line-height:1.5">
+          <div style="display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;background:var(--bg2)">
+            <div style="width:48px;height:48px;border-radius:12px;background:#16a34a;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:24px;flex-shrink:0">C</div>
+            <div>
+              <b>CoffeeIT для iPhone и iPad</b>
+              <div class="small muted">Работает как обычное iOS-приложение на рабочем столе — без App Store и без адресной строки.</div>
+            </div>
+          </div>
+          <ol style="padding-left:20px;display:flex;flex-direction:column;gap:6px">
+            <li>Откройте этот сайт в браузере <b>Safari</b> на iPhone или iPad.</li>
+            <li>Нажмите кнопку <b>«Поделиться»</b> (квадрат со стрелкой вверх) внизу экрана.</li>
+            <li>Выберите пункт <b>«На экран „Домой“»</b> → <b>«Добавить»</b>.</li>
+          </ol>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
+            ${navigator.share ? '<button type="button" class="btn btn-primary" id="ios-share-btn" style="flex:1">Открыть меню «Поделиться»</button>' : ''}
+            <button type="button" class="btn" id="ios-copy-btn" style="flex:1">Скопировать ссылку</button>
+          </div>
+        </div>`,
+      onMount: (root) => {
+        const shareBtn = root.querySelector('#ios-share-btn');
+        if (shareBtn && navigator.share) {
+          shareBtn.onclick = () => navigator.share({ title: 'CoffeeIT', text: 'Доска объявлений CoffeeIT', url: appUrl }).catch(() => {});
+        }
+        const copyBtn = root.querySelector('#ios-copy-btn');
+        if (copyBtn) {
+          copyBtn.onclick = async () => {
+            try {
+              await navigator.clipboard.writeText(appUrl);
+              toast('Ссылка скопирована — откройте её в Safari на iPhone');
+            } catch (e) {
+              toast(appUrl);
+            }
+          };
+        }
+      },
+      actions: [{ label: 'Закрыть', onClick: (close) => close() }],
+    });
+  }
+
   // Глобальный делегированный обработчик (для карточек, отрисованных позже)
   document.addEventListener('click', async (e) => {
+    const iosBtn = e.target.closest('[data-install-ios]');
+    if (iosBtn) {
+      e.preventDefault();
+      openInstallIosModal();
+      return;
+    }
+
     const priv = e.target.closest('[data-open-privacy]');
     if (priv) {
       e.preventDefault();

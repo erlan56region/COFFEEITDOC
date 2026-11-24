@@ -257,3 +257,50 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 }
 main:focus{outline:none}
 @media (prefers-reduced-motion: reduce){*{animation-duration:.01ms !important;transition-duration:.01ms !important}}
+
+/* ---- Адаптация под планшеты (iPad), телефоны и iPhone ---- */
+html,body{overflow-x:hidden;-webkit-text-size-adjust:100%}
+body{
+  padding-bottom:env(safe-area-inset-bottom, 0px);
+}
+.header{
+  padding-top:env(safe-area-inset-top, 0px);
+}
+a,button,.btn,.icon-btn{
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+}
+
+/* Планшеты (iPad и др.) */
+@media (max-width: 1024px){
+  .container{padding-left:16px;padding-right:16px}
+  .header-inner{flex-wrap:wrap;gap:10px;padding-top:10px;padding-bottom:10px;height:auto}
+  .search{order:3;flex:1 1 100%;max-width:none}
+  .grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+
+/* Телефоны и iPhone */
+@media (max-width: 640px){
+  :root{--header-h:auto}
+  .container{padding-left:12px;padding-right:12px}
+  .header-inner{gap:8px;padding-top:8px;padding-bottom:8px}
+  .logo-text small{display:none}
+  .header-actions{gap:6px}
+  .btn,.icon-btn{min-height:44px}
+  .btn-post span{display:none}
+  .btn-post{padding-left:12px;padding-right:12px}
+  /* Предотвращаем авто-зум Safari на iPhone при фокусе в поля ввода */
+  input,select,textarea{font-size:16px !important}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .card-pad{padding:14px}
+  .hero{padding:18px 14px}
+  .hero h1{font-size:22px;line-height:1.25}
+  .footer-inner{flex-direction:column;align-items:flex-start;gap:12px}
+  .footer-links{flex-wrap:wrap;gap:10px}
+  .modal{width:calc(100vw - 24px);max-height:calc(100dvh - 32px);overflow-y:auto;-webkit-overflow-scrolling:touch}
+}
+
+/* Узкие экраны (iPhone SE и др.) */
+@media (max-width: 380px){
+  .grid{grid-template-columns:1fr}
+}
