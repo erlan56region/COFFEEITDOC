@@ -585,7 +585,37 @@
   }
 
   /* ---- поддержка проекта / благотворительность напрямую ---- */
+  const RU_BANKS = [
+    { name: 'СберБанк', color: '#21A038', scheme: 'sberbankonline://', web: 'https://online.sberbank.ru/' },
+    { name: 'Т-Банк (Тинькофф)', color: '#FFDD2D', darkText: true, scheme: 'tinkoffbank://', web: 'https://www.tbank.ru/' },
+    { name: 'Альфа-Банк', color: '#EF3124', scheme: 'alfabank://', web: 'https://alfabank.ru/' },
+    { name: 'ВТБ Онлайн', color: '#002882', scheme: 'vtb24://', web: 'https://online.vtb.ru/' },
+    { name: 'Газпромбанк', color: '#0057B6', scheme: 'gpb://', web: 'https://ib.online.gpb.ru/' },
+    { name: 'Озон Банк', color: '#005BFF', scheme: 'ozonbank://', web: 'https://finance.ozon.ru/' },
+    { name: 'Яндекс Пэй', color: '#000000', scheme: 'yandexpay://', web: 'https://bank.yandex.ru/' },
+    { name: 'Райффайзен', color: '#FEE600', darkText: true, scheme: 'raiffeisen://', web: 'https://online.raiffeisen.ru/' },
+    { name: 'Совкомбанк', color: '#003791', scheme: 'halvacard://', web: 'https://halvacard.ru/' },
+    { name: 'Россельхозбанк', color: '#42AB44', scheme: 'rshb://', web: 'https://online.rshb.ru/' },
+    { name: 'ПСБ', color: '#EA5616', scheme: 'psbank://', web: 'https://ib.psbank.ru/' },
+    { name: 'МТС Банк', color: '#E30611', scheme: 'mtsbank://', web: 'https://online.mtsbank.ru/' },
+    { name: 'Почта Банк', color: '#002F87', scheme: 'pochtabank://', web: 'https://my.pochtabank.ru/' },
+    { name: 'Уралсиб', color: '#2E1A47', scheme: 'uralsib://', web: 'https://i.uralsib.ru/' },
+    { name: 'Банк СПб', color: '#E2001A', scheme: 'bspb://', web: 'https://i.bspb.ru/' },
+    { name: 'Ак Барс Банк', color: '#009A44', scheme: 'akbars://', web: 'https://online.akbars.ru/' },
+    { name: 'Русский Стандарт', color: '#006838', scheme: 'rsb://', web: 'https://online.rsb.ru/' },
+    { name: 'Ренессанс Банк', color: '#E40046', scheme: 'rencredit://', web: 'https://ib.rencredit.ru/' },
+    { name: 'ОТП Банк', color: '#52AE30', scheme: 'otpbank://', web: 'https://online.otpbank.ru/' },
+    { name: 'УБРиР', color: '#A6192E', scheme: 'ubrr://', web: 'https://i.ubrr.ru/' },
+    { name: 'МКБ', color: '#D22630', scheme: 'mkb://', web: 'https://online.mkb.ru/' },
+    { name: 'Точка Банк', color: '#6E2EFF', scheme: 'tochka://', web: 'https://i.tochka.com/' },
+    { name: 'РНКБ', color: '#0088CC', scheme: 'rncb://', web: 'https://online.rncb.ru/' },
+    { name: 'Синара Банк', color: '#FF5C00', scheme: 'sinara://', web: 'https://online.sinara.ru/' },
+    { name: 'Авангард', color: '#006E51', scheme: 'avangard://', web: 'https://www.avangard.ru/' },
+    { name: 'ЮMoney', color: '#8B3FFD', scheme: 'yoomoney://', web: 'https://yoomoney.ru/' },
+  ];
+
   function openSupportProjectModal(adTitle) {
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent || '');
     openModal({
       title: 'Объявление опубликовано!',
       body: `
@@ -595,7 +625,7 @@
             ${adTitle ? `<div class="small muted">«${UI.esc(adTitle)}»</div>` : ''}
           </div>
           <p><b>Поддержать проект CoffeeIT и благотворительность напрямую</b><br/>
-          <span class="muted">Размещение объявлений у нас бесплатное. Если проект оказался полезен и вы хотите поддержать его развитие и благотворительные инициативы напрямую — выберите удобную сумму:</span></p>
+          <span class="muted">Выберите сумму и нажмите на ваш банк — номер карты скопируется автоматически, и на телефоне сразу откроется приложение банка.</span></p>
           <div style="display:flex;gap:8px;flex-wrap:wrap" id="support-amounts">
             <button type="button" class="btn btn-sm" data-sup-sum="50">50 ₽</button>
             <button type="button" class="btn btn-sm btn-primary" data-sup-sum="100">100 ₽</button>
@@ -607,13 +637,18 @@
             <input class="input" id="support-custom-sum" type="number" min="10" step="10" value="100"/>
           </div>
           <div style="padding:12px 14px;border-radius:12px;background:var(--bg2);border:1px solid var(--border);font-size:13.5px;line-height:1.55">
-            <b>Прямая поддержка и благотворительность (перевод на карту):</b>
+            <b>Номер карты для перевода:</b>
             <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin:8px 0;padding:10px 12px;border-radius:10px;background:var(--card);border:1px solid var(--border);flex-wrap:wrap">
               <code style="font-size:16px;font-weight:800;letter-spacing:.06em">2204 1801 2664 7940</code>
               <button type="button" class="btn btn-sm" id="support-copy-card">Скопировать</button>
             </div>
             <span class="muted small">Назначение: «Поддержка проекта CoffeeIT». Любая сумма добровольна.</span>
           </div>
+          <div class="field">
+            <label for="support-bank-search">Открыть ваш банк на телефоне</label>
+            <input class="input" id="support-bank-search" type="search" placeholder="Поиск банка (Сбер, Т-Банк, Альфа, ВТБ…)" autocomplete="off"/>
+          </div>
+          <div id="support-banks-grid" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;max-height:210px;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-right:2px"></div>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
             <button type="button" class="btn btn-primary" id="support-confirm-btn" style="flex:1">❤️ Я перевёл поддержку</button>
             <button type="button" class="btn" id="support-skip-btn" style="flex:1">Перейти к объявлению</button>
@@ -621,6 +656,40 @@
         </div>`,
       onMount: (root, close) => {
         const input = root.querySelector('#support-custom-sum');
+        const search = root.querySelector('#support-bank-search');
+        const grid = root.querySelector('#support-banks-grid');
+
+        const renderBanks = (q) => {
+          const term = String(q || '').trim().toLowerCase();
+          const list = term ? RU_BANKS.filter(b => b.name.toLowerCase().includes(term)) : RU_BANKS;
+          if (!list.length) {
+            grid.innerHTML = '<div class="small muted" style="grid-column:1/-1;padding:8px 0">Банк не найден — скопируйте номер карты выше и откройте ваш банк вручную.</div>';
+            return;
+          }
+          grid.innerHTML = list.map((b, idx) => `
+            <button type="button" class="btn btn-sm" data-bank-idx="${RU_BANKS.indexOf(b)}" style="justify-content:flex-start;gap:8px;min-height:44px;padding:8px 10px;border-color:var(--border);background:var(--card);color:var(--text);text-align:left">
+              <span style="width:12px;height:12px;border-radius:50%;background:${b.color};flex-shrink:0;border:1px solid rgba(0,0,0,.1)"></span>
+              <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;font-size:13px">${UI.esc(b.name)}</span>
+            </button>`).join('');
+          grid.querySelectorAll('[data-bank-idx]').forEach((btn) => {
+            btn.onclick = async () => {
+              const bank = RU_BANKS[Number(btn.dataset.bankIdx)];
+              if (!bank) return;
+              try { await navigator.clipboard.writeText('2204180126647940'); } catch (e) {}
+              toast(`Номер карты скопирован! Открываем ${bank.name}…`);
+              if (isMobile) {
+                window.location.href = bank.scheme;
+                setTimeout(() => { window.open(bank.web, '_blank', 'noopener'); }, 1500);
+              } else {
+                window.open(bank.web, '_blank', 'noopener');
+              }
+            };
+          });
+        };
+
+        renderBanks('');
+        search.oninput = () => renderBanks(search.value);
+
         root.querySelectorAll('[data-sup-sum]').forEach((b) => {
           b.onclick = () => {
             root.querySelectorAll('[data-sup-sum]').forEach((x) => x.classList.remove('btn-primary'));
