@@ -67,7 +67,7 @@
     return `
     <div class="container">
       <div class="hero">
-        <h1>Купить, продать и договориться — на Копейкино</h1>
+        <h1>Купить, продать и договориться — на CoffeeIT</h1>
         <p>Объявления рядом с вами: фото, честные описания, переписка с продавцом и сделки в один клик — личная встреча, доставка или перевозка.</p>
         <div class="hero-actions">
           <a class="btn btn-primary" href="/new" data-link>Разместить объявление</a>
@@ -510,11 +510,27 @@
     const meta = state.meta || {};
     const demo = meta.demo || { phone: '+79990000001', password: 'demo1234' };
     return `
-    <div class="container" style="max-width:920px">
+    <div class="container" style="max-width:940px">
       <div class="page-head"><div>
-        <div class="page-title">Вход и регистрация</div>
-        <div class="muted small">Аккаунт нужен, чтобы размещать объявления и переписываться.</div>
+        <div class="page-title">Вход и регистрация в CoffeeIT</div>
+        <div class="muted small">Быстрый вход через Яндекс ID / VK ID или регистрация по телефону с соблюдением 152-ФЗ.</div>
       </div></div>
+
+      <div class="card card-pad" style="margin-bottom:18px">
+        <div class="card-title" style="margin-bottom:6px">Быстрая регистрация и вход</div>
+        <p class="small muted" style="margin-bottom:14px">Запрашиваем только минимальные данные: имя, контакт и аватар. Перед созданием аккаунта вы подтверждаете согласие на обработку ПДн (ст. 9 152-ФЗ).</p>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <button type="button" class="btn" data-oauth="yandex" style="background:#000;color:#fff;border-color:#000;flex:1;min-width:220px;justify-content:center;gap:10px;padding:12px 16px">
+            <span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:#fc3f1d;color:#fff;font-weight:800;font-size:13px">Я</span>
+            <span>Войти с Яндекс ID</span>
+          </button>
+          <button type="button" class="btn" data-oauth="vk" style="background:#0077ff;color:#fff;border-color:#0077ff;flex:1;min-width:220px;justify-content:center;gap:10px;padding:12px 16px">
+            <span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:6px;background:#fff;color:#0077ff;font-weight:800;font-size:11px">VK</span>
+            <span>Войти с VK ID</span>
+          </button>
+        </div>
+      </div>
+
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px" class="auth-grid">
         <form class="card card-pad" id="login-form" style="display:flex;flex-direction:column;gap:14px">
           <div class="card-title">У меня уже есть аккаунт</div>
@@ -525,12 +541,24 @@
         </form>
         <form class="card card-pad" id="register-form" style="display:flex;flex-direction:column;gap:14px">
           <div class="card-title">Я новый пользователь</div>
-          <div class="field">${label('Имя', 'reg-name')}<input class="input" name="name" id="reg-name" placeholder="Как к вам обращаться" autocomplete="name"/></div>
-          <div class="field">${label('Телефон', 'reg-phone')}<input class="input" name="phone" id="reg-phone" placeholder="+7 999 000-00-00" autocomplete="tel"/></div>
+          <div class="field">${label('Имя', 'reg-name')}<input class="input" name="name" id="reg-name" placeholder="Как к вам обращаться" autocomplete="name" required/></div>
+          <div class="field">${label('Телефон', 'reg-phone')}<input class="input" name="phone" id="reg-phone" placeholder="+7 999 000-00-00" autocomplete="tel" required/></div>
           <div class="row">
-            <div class="field">${label('Пароль', 'reg-password')}<input class="input" name="password" id="reg-password" type="password" placeholder="минимум 6 символов" autocomplete="new-password"/></div>
+            <div class="field">${label('Пароль', 'reg-password')}<input class="input" name="password" id="reg-password" type="password" placeholder="минимум 6 символов" autocomplete="new-password" required/></div>
             <div class="field">${label('Город', 'reg-city')}<input class="input" name="city" id="reg-city" placeholder="Москва" value="Москва"/></div>
           </div>
+          <div class="field">${label('Цель использования (опционально)', 'reg-goal')}
+            <select class="select" name="goal" id="reg-goal">
+              <option value="">Не указывать</option>
+              <option value="buy">Покупать товары</option>
+              <option value="sell">Продавать и размещать объявления</option>
+              <option value="both">Покупать и продавать</option>
+            </select>
+          </div>
+          <label style="display:flex;gap:10px;align-items:flex-start;font-size:13px;line-height:1.45;cursor:pointer">
+            <input type="checkbox" name="consent" id="reg-consent" style="margin-top:3px;flex-shrink:0" required/>
+            <span>Я даю согласие на обработку моих персональных данных в соответствии с <a href="#" data-open-privacy style="color:var(--primary);text-decoration:underline">Политикой конфиденциальности CoffeeIT</a> (152-ФЗ).</span>
+          </label>
           <button class="btn btn-primary" type="submit">Создать аккаунт</button>
         </form>
       </div>

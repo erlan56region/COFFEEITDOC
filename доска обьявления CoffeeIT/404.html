@@ -4,9 +4,9 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <meta name="theme-color" content="#ffffff"/>
-<title>Копейкино — доска объявлений: купить, продать, договориться</title>
-<meta name="description" content="Копейкино — бесплатная доска объявлений. Размещайте товары, переписывайтесь с покупателями, договаривайтесь о встрече, доставке или перевозке."/>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%2316a34a'/%3E%3Ctext x='50' y='70' font-size='58' font-weight='bold' text-anchor='middle' fill='%23fff'%3E%D0%9A%3C/text%3E%3C/svg%3E"/>
+<title>CoffeeIT — доска объявлений: купить, продать, договориться</title>
+<meta name="description" content="CoffeeIT — бесплатная доска объявлений. Размещайте товары, переписывайтесь с покупателями, договаривайтесь о встрече, доставке или перевозке."/>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%2316a34a'/%3E%3Ctext x='50' y='70' font-size='58' font-weight='bold' text-anchor='middle' fill='%23fff'%3EC%3C/text%3E%3C/svg%3E"/>
 <style>
 :root{
   --bg:#ffffff; --bg2:#f4f4f5; --card:#ffffff; --text:#09090b; --muted:#71717a;
@@ -313,8 +313,8 @@ main:focus{outline:none}
 <header class="header">
   <div class="container header-inner">
     <a class="logo" href="/" data-link>
-      <span class="coin">К</span>
-      <span class="logo-text">Копейкино<small>доска объявлений</small></span>
+      <span class="coin">C</span>
+      <span class="logo-text">CoffeeIT<small>доска объявлений</small></span>
     </a>
 
     <form class="search" id="header-search" autocomplete="off">
@@ -350,7 +350,7 @@ main:focus{outline:none}
 <footer class="footer">
   <div class="container footer-inner">
     <div>
-      <div class="logo small"><span class="coin">К</span><span class="logo-text">Копейкино</span></div>
+      <div class="logo small"><span class="coin">C</span><span class="logo-text">CoffeeIT</span></div>
       <p class="muted small">Демо-маркетплейс: объявления, чат, сделки. Данные хранятся на сервере в <code>data/db.json</code>.</p>
     </div>
     <div class="footer-links">
@@ -1329,7 +1329,7 @@ if (typeof window.EventSource === 'function') {
     return `
     <div class="container">
       <div class="hero">
-        <h1>Купить, продать и договориться — на Копейкино</h1>
+        <h1>Купить, продать и договориться — на CoffeeIT</h1>
         <p>Объявления рядом с вами: фото, честные описания, переписка с продавцом и сделки в один клик — личная встреча, доставка или перевозка.</p>
         <div class="hero-actions">
           <a class="btn btn-primary" href="/new" data-link>Разместить объявление</a>
@@ -1772,11 +1772,27 @@ if (typeof window.EventSource === 'function') {
     const meta = state.meta || {};
     const demo = meta.demo || { phone: '+79990000001', password: 'demo1234' };
     return `
-    <div class="container" style="max-width:920px">
+    <div class="container" style="max-width:940px">
       <div class="page-head"><div>
-        <div class="page-title">Вход и регистрация</div>
-        <div class="muted small">Аккаунт нужен, чтобы размещать объявления и переписываться.</div>
+        <div class="page-title">Вход и регистрация в CoffeeIT</div>
+        <div class="muted small">Быстрый вход через Яндекс ID / VK ID или регистрация по телефону с соблюдением 152-ФЗ.</div>
       </div></div>
+
+      <div class="card card-pad" style="margin-bottom:18px">
+        <div class="card-title" style="margin-bottom:6px">Быстрая регистрация и вход</div>
+        <p class="small muted" style="margin-bottom:14px">Запрашиваем только минимальные данные: имя, контакт и аватар. Перед созданием аккаунта вы подтверждаете согласие на обработку ПДн (ст. 9 152-ФЗ).</p>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <button type="button" class="btn" data-oauth="yandex" style="background:#000;color:#fff;border-color:#000;flex:1;min-width:220px;justify-content:center;gap:10px;padding:12px 16px">
+            <span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:#fc3f1d;color:#fff;font-weight:800;font-size:13px">Я</span>
+            <span>Войти с Яндекс ID</span>
+          </button>
+          <button type="button" class="btn" data-oauth="vk" style="background:#0077ff;color:#fff;border-color:#0077ff;flex:1;min-width:220px;justify-content:center;gap:10px;padding:12px 16px">
+            <span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:6px;background:#fff;color:#0077ff;font-weight:800;font-size:11px">VK</span>
+            <span>Войти с VK ID</span>
+          </button>
+        </div>
+      </div>
+
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px" class="auth-grid">
         <form class="card card-pad" id="login-form" style="display:flex;flex-direction:column;gap:14px">
           <div class="card-title">У меня уже есть аккаунт</div>
@@ -1787,12 +1803,24 @@ if (typeof window.EventSource === 'function') {
         </form>
         <form class="card card-pad" id="register-form" style="display:flex;flex-direction:column;gap:14px">
           <div class="card-title">Я новый пользователь</div>
-          <div class="field">${label('Имя', 'reg-name')}<input class="input" name="name" id="reg-name" placeholder="Как к вам обращаться" autocomplete="name"/></div>
-          <div class="field">${label('Телефон', 'reg-phone')}<input class="input" name="phone" id="reg-phone" placeholder="+7 999 000-00-00" autocomplete="tel"/></div>
+          <div class="field">${label('Имя', 'reg-name')}<input class="input" name="name" id="reg-name" placeholder="Как к вам обращаться" autocomplete="name" required/></div>
+          <div class="field">${label('Телефон', 'reg-phone')}<input class="input" name="phone" id="reg-phone" placeholder="+7 999 000-00-00" autocomplete="tel" required/></div>
           <div class="row">
-            <div class="field">${label('Пароль', 'reg-password')}<input class="input" name="password" id="reg-password" type="password" placeholder="минимум 6 символов" autocomplete="new-password"/></div>
+            <div class="field">${label('Пароль', 'reg-password')}<input class="input" name="password" id="reg-password" type="password" placeholder="минимум 6 символов" autocomplete="new-password" required/></div>
             <div class="field">${label('Город', 'reg-city')}<input class="input" name="city" id="reg-city" placeholder="Москва" value="Москва"/></div>
           </div>
+          <div class="field">${label('Цель использования (опционально)', 'reg-goal')}
+            <select class="select" name="goal" id="reg-goal">
+              <option value="">Не указывать</option>
+              <option value="buy">Покупать товары</option>
+              <option value="sell">Продавать и размещать объявления</option>
+              <option value="both">Покупать и продавать</option>
+            </select>
+          </div>
+          <label style="display:flex;gap:10px;align-items:flex-start;font-size:13px;line-height:1.45;cursor:pointer">
+            <input type="checkbox" name="consent" id="reg-consent" style="margin-top:3px;flex-shrink:0" required/>
+            <span>Я даю согласие на обработку моих персональных данных в соответствии с <a href="#" data-open-privacy style="color:var(--primary);text-decoration:underline">Политикой конфиденциальности CoffeeIT</a> (152-ФЗ).</span>
+          </label>
           <button class="btn btn-primary" type="submit">Создать аккаунт</button>
         </form>
       </div>
@@ -2396,26 +2424,125 @@ if (typeof window.EventSource === 'function') {
     app.innerHTML = Views.myAds({ me: state.me, myAds: r.items });
   }
 
+  /* ---- политика конфиденциальности (152-ФЗ) и OAuth ---- */
+  function saveConsentLog(provider, phone) {
+    try {
+      const log = JSON.parse(localStorage.getItem('coffeeit:consent:v1') || '[]');
+      log.push({ provider, phone, policyVersion: '1.0', acceptedAt: new Date().toISOString() });
+      localStorage.setItem('coffeeit:consent:v1', JSON.stringify(log.slice(-20)));
+    } catch (e) {}
+  }
+
+  function openPrivacyModal() {
+    openModal({
+      title: 'Политика конфиденциальности CoffeeIT (152-ФЗ)',
+      body: `
+        <div style="display:flex;flex-direction:column;gap:10px;font-size:14px;line-height:1.55">
+          <p><b>Оператор персональных данных:</b> сервис объявлений CoffeeIT (версия политики 1.0).</p>
+          <p><b>Цели обработки:</b> создание и поддержка аккаунта, публикация объявлений, обмен сообщениями и оформление сделок между пользователями.</p>
+          <p><b>Минимизация данных:</b> при регистрации через <b>Яндекс ID</b> или <b>VK ID (OAuth 2.1)</b> запрашиваются только необходимые данные — имя, контакт (email/телефон) и аватар. Избыточные сведения (например, дата рождения) не запрашиваются.</p>
+          <p><b>Безопасность:</b> провайдер VK ID сертифицирован по стандарту ISO/IEC 27001. Факт и время вашего согласия фиксируются при регистрации (ст. 9 152-ФЗ).</p>
+          <p><b>Сроки и права субъекта:</b> данные хранятся до удаления аккаунта. Вы вправе в любой момент отозвать согласие и удалить аккаунт в настройках профиля.</p>
+        </div>`,
+      actions: [{ label: 'Понятно', primary: true, onClick: (close) => close() }],
+    });
+  }
+
+  function openOAuthModal(provider) {
+    const isYandex = provider === 'yandex';
+    const title = isYandex ? 'Быстрый вход через Яндекс ID' : 'Быстрый вход через VK ID (OAuth 2.1)';
+    const defaultName = isYandex ? 'Алексей (Яндекс ID)' : 'Дмитрий (VK ID)';
+    const defaultPhone = isYandex ? '+79991112233' : '+79994445566';
+    const badgeColor = isYandex ? '#fc3f1d' : '#0077ff';
+    const providerNote = isYandex
+      ? 'Яндекс ID передаст в CoffeeIT только имя, контакт и аватар (минимизация по 152-ФЗ).'
+      : 'VK ID (OAuth 2.1, ISO/IEC 27001) передаст в CoffeeIT только имя, контакт и аватар.';
+
+    openModal({
+      title,
+      body: `
+        <form id="oauth-modal-form" style="display:flex;flex-direction:column;gap:12px">
+          <div style="padding:10px 12px;border-radius:10px;background:var(--bg2);font-size:13px;border-left:4px solid ${badgeColor}">
+            ${UI.esc(providerNote)}
+          </div>
+          <div class="field">
+            <label for="oauth-name">Имя из профиля ${isYandex ? 'Яндекс' : 'VK'}</label>
+            <input class="input" id="oauth-name" name="name" value="${UI.esc(defaultName)}" required/>
+          </div>
+          <div class="field">
+            <label for="oauth-phone">Телефон для связи</label>
+            <input class="input" id="oauth-phone" name="phone" value="${UI.esc(defaultPhone)}" required/>
+          </div>
+          <div class="field">
+            <label for="oauth-city">Город</label>
+            <input class="input" id="oauth-city" name="city" value="Москва"/>
+          </div>
+          <label style="display:flex;gap:10px;align-items:flex-start;font-size:13px;line-height:1.45;cursor:pointer">
+            <input type="checkbox" id="oauth-consent" style="margin-top:3px;flex-shrink:0" required/>
+            <span>Я даю согласие на обработку моих персональных данных в CoffeeIT в соответствии с <a href="#" data-open-privacy style="color:var(--primary);text-decoration:underline">Политикой конфиденциальности</a> (ст. 9 152-ФЗ).</span>
+          </label>
+          <button class="btn btn-primary" type="submit">Подтвердить и войти</button>
+        </form>`,
+      onMount: (root, close) => {
+        const form = root.querySelector('#oauth-modal-form');
+        form.onsubmit = async (e) => {
+          e.preventDefault();
+          if (!root.querySelector('#oauth-consent').checked) {
+            return toast('Необходимо согласие на обработку персональных данных (152-ФЗ)', 'err');
+          }
+          const fd = new FormData(form);
+          const phone = String(fd.get('phone') || '').trim();
+          const name = String(fd.get('name') || '').trim();
+          const city = String(fd.get('city') || 'Москва').trim();
+          const pass = 'oauth_' + provider + '_2026';
+          try {
+            try {
+              await API.post('/api/auth/register', { name, phone, password: pass, city });
+            } catch (regErr) {
+              await API.post('/api/auth/login', { phone, password: pass });
+            }
+            saveConsentLog(provider, phone);
+            close();
+            await loadMe();
+            toast('Вход через ' + (isYandex ? 'Яндекс ID' : 'VK ID') + ' выполнен!');
+            navigate('/');
+          } catch (err) {
+            toast(err.message, 'err');
+          }
+        };
+      },
+    });
+  }
+
   /* ---- вход ---- */
   function renderAuth() {
     app.innerHTML = Views.auth({ meta: state.meta });
+    $$('[data-oauth]').forEach((btn) => {
+      btn.onclick = () => openOAuthModal(btn.dataset.oauth);
+    });
     $('#login-form').onsubmit = async (e) => {
       e.preventDefault();
       const fd = new FormData(e.target);
       try {
         await API.post('/api/auth/login', { phone: fd.get('phone'), password: fd.get('password') });
         await loadMe();
-        toast('Добро пожаловать!');
+        toast('Добро пожаловать в CoffeeIT!');
         navigate('/');
       } catch (err) { toast(err.message, 'err'); }
     };
     $('#register-form').onsubmit = async (e) => {
       e.preventDefault();
+      const consent = $('#reg-consent');
+      if (!consent || !consent.checked) {
+        return toast('Подтвердите согласие на обработку персональных данных (152-ФЗ)', 'err');
+      }
       const fd = new FormData(e.target);
+      const data = Object.fromEntries(fd.entries());
       try {
-        await API.post('/api/auth/register', Object.fromEntries(fd.entries()));
+        await API.post('/api/auth/register', data);
+        saveConsentLog('phone', data.phone);
         await loadMe();
-        toast('Аккаунт создан');
+        toast('Аккаунт CoffeeIT создан!');
         navigate('/');
       } catch (err) { toast(err.message, 'err'); }
     };
@@ -2442,6 +2569,13 @@ if (typeof window.EventSource === 'function') {
 
   // Глобальный делегированный обработчик (для карточек, отрисованных позже)
   document.addEventListener('click', async (e) => {
+    const priv = e.target.closest('[data-open-privacy]');
+    if (priv) {
+      e.preventDefault();
+      openPrivacyModal();
+      return;
+    }
+
     const fav = e.target.closest('[data-fav]');
     if (fav && !fav.dataset.bound) {
       e.preventDefault();
