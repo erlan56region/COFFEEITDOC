@@ -1820,6 +1820,26 @@ if (typeof window.EventSource === 'function') {
             ${d.price != null ? `<span>Цена: <b>${esc(price(d.price))}</b></span>` : ''}
             <span>С кем: <a href="/user/${esc(d.peer.id)}" data-link style="color:var(--primary)">${esc(d.peer.name)}</a></span>
           </div>
+          <div class="field">
+            <label>Платное продвижение</label>
+            <div style="padding:14px;border-radius:14px;background:linear-gradient(135deg,rgba(245,158,11,.10),rgba(22,163,74,.08));border:1px solid rgba(245,158,11,.35);display:flex;flex-direction:column;gap:10px">
+              <label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer;font-weight:600">
+                <input type="checkbox" id="f-promote" name="promote" style="margin-top:3px;flex-shrink:0"/>
+                <span>Поднять объявление в ТОП просмотров — <b style="color:var(--primary)">100 ₽</b> <span class="small muted" style="font-weight:400">(на 7 дней, больше просмотров)</span></span>
+              </label>
+              <div id="f-promote-methods" style="display:none;flex-direction:column;gap:8px;padding-left:24px">
+                <div class="small muted">Способ оплаты:</div>
+                <div style="display:flex;gap:12px;flex-wrap:wrap">
+                  <label style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-size:13.5px">
+                    <input type="radio" name="promoMethod" value="sbp" checked/> СБП (по номеру / QR)
+                  </label>
+                  <label style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-size:13.5px">
+                    <input type="radio" name="promoMethod" value="card"/> Перевод на карту
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
           <div class="actions">
             <a class="btn btn-sm" href="/chats/${esc(d.chatId)}" data-link>Открыть чат</a>
             ${!d.mine && d.status === 'proposed' ? `<button class="btn btn-sm btn-primary" data-deal-status="${esc(d.id)}" data-next="confirmed">${icons.check} Подтвердить</button>
@@ -2466,6 +2486,9 @@ if (typeof window.EventSource === 'function') {
         },
         photos: state.photos,
       };
+      const promoteChecked = !!(form.querySelector('#f-promote') && form.querySelector('#f-promote').checked);
+      const promoMethodEl = form.querySelector('input[name="promoMethod"]:checked');
+      const promoMethod = promoMethodEl ? promoMethodEl.value : 'sbp';
       const submit = form.querySelector('[type="submit"]');
       submit.disabled = true;
       submit.textContent = 'Сохраняем…';
@@ -2474,10 +2497,12 @@ if (typeof window.EventSource === 'function') {
           await API.patch('/api/ads/' + state.editAd.id, payload);
           toast('Изменения сохранены');
           navigate('/ad/' + state.editAd.id);
+          if (promoteChecked) openPromoPaymentModal({ adId: state.editAd.id, adTitle: payload.title, method: promoMethod });
         } else {
           const r = await API.post('/api/ads', payload);
           toast('Объявление опубликовано');
           navigate('/ad/' + r.ad.id);
+          if (promoteChecked) openPromoPaymentModal({ adId: r.ad.id, adTitle: payload.title, method: promoMethod });
         }
       } catch (err) {
         // не сохранилось (нет места / хранилище недоступно) — сообщение держим дольше,
@@ -2639,9 +2664,107 @@ if (typeof window.EventSource === 'function') {
     });
   }
 
+  /* ---- платное продвижение в ТОП (100 ₽ — СБП / перевод на карту) ---- */
+  function getPromos() {
+    try { return JSON.parse(localStorage.getItem('coffeeit:promos:v1') || '[]'); } catch (e) { return []; }
+  }
+  function savePromo(entry) {
+    try {
+      const list = getPromos();
+      list.unshift(entry);
+      localStorage.setItem('coffeeit:promos:v1', JSON.stringify(list.slice(0, 50)));
+    } catch (e) {}
+  }
+
+  function renderMePromos() {
+    const box = $('#me-promos-list');
+    if (!box) return;
+    const list = getPromos();
+    if (!list.length) {
+      box.innerHTML = '<div class="small muted">Пока нет активных продвижений. Поднимите любое объявление в ТОП просмотров за 100 ₽.</div>';
+      return;
+    }
+    box.innerHTML = list.map((p) => {
+      const methodLabel = p.method === 'card' ? 'Перевод на карту' : 'СБП';
+      const dt = new Date(p.createdAt).toLocaleDateString('ru-RU');
+      return `<div style="padding:10px 12px;border-radius:12px;background:var(--bg2);border:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
+        <div>
+          <div style="font-weight:700;font-size:14px">★ ${UI.esc(p.adTitle || 'Объявление')}</div>
+          <div class="small muted">${dt} · ${methodLabel} · <b>100 ₽</b></div>
+        </div>
+        <span style="font-size:11px;padding:3px 9px;border-radius:999px;background:rgba(22,163,74,.14);color:var(--primary);font-weight:700">В ТОПе (7 дней)</span>
+      </div>`;
+    }).join('');
+  }
+
+  function openPromoPaymentModal(opts = {}) {
+    const initMethod = opts.method === 'card' ? 'card' : 'sbp';
+    const initTitle = opts.adTitle || '';
+    openModal({
+      title: 'Продвижение в ТОП просмотров — 100 ₽',
+      body: `
+        <form id="promo-pay-form" style="display:flex;flex-direction:column;gap:12px;font-size:14px">
+          <div style="padding:12px 14px;border-radius:12px;background:linear-gradient(135deg,rgba(245,158,11,.14),rgba(22,163,74,.10));border:1px solid rgba(245,158,11,.35)">
+            <b>★ ТОП просмотров на 7 дней — 100 ₽</b>
+            <div class="small muted" style="margin-top:3px">Объявление выделяется и показывается выше в ленте CoffeeIT.</div>
+          </div>
+          <div class="field">
+            <label for="promo-ad-title">Объявление</label>
+            <input class="input" id="promo-ad-title" name="adTitle" placeholder="Название объявления" value="${UI.esc(initTitle)}" required/>
+          </div>
+          <div class="field">
+            <label>Выберите способ оплаты</label>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px">
+              <label style="flex:1;min-width:150px;padding:10px 12px;border-radius:12px;border:1px solid var(--border);background:var(--bg2);display:flex;align-items:center;gap:8px;cursor:pointer">
+                <input type="radio" name="payMethod" value="sbp" ${initMethod === 'sbp' ? 'checked' : ''}/>
+                <span><b>СБП</b> (быстрый перевод)</span>
+              </label>
+              <label style="flex:1;min-width:150px;padding:10px 12px;border-radius:12px;border:1px solid var(--border);background:var(--bg2);display:flex;align-items:center;gap:8px;cursor:pointer">
+                <input type="radio" name="payMethod" value="card" ${initMethod === 'card' ? 'checked' : ''}/>
+                <span><b>Перевод на карту</b></span>
+              </label>
+            </div>
+          </div>
+          <div id="promo-pay-details" style="padding:12px;border-radius:12px;background:var(--bg2);border:1px solid var(--border);font-size:13px;line-height:1.5"></div>
+          <button class="btn btn-primary" type="submit">Я оплатил 100 ₽ — активировать ТОП</button>
+        </form>`,
+      onMount: (root, close) => {
+        const details = root.querySelector('#promo-pay-details');
+        const updateDetails = () => {
+          const m = root.querySelector('input[name="payMethod"]:checked').value;
+          if (m === 'sbp') {
+            details.innerHTML = '<b>Оплата через СБП:</b><br/>Сумма: <b>100 ₽</b><br/>Переведите по СБП по номеру телефона получателя CoffeeIT (укажите свой номер в комментарии) и нажмите кнопку подтверждения ниже.';
+          } else {
+            details.innerHTML = '<b>Перевод на банковскую карту:</b><br/>Сумма: <b>100 ₽</b><br/>Выполните перевод на карту получателя CoffeeIT (укажите название объявления в комментарии) и нажмите кнопку подтверждения ниже.';
+          }
+        };
+        updateDetails();
+        root.querySelectorAll('input[name="payMethod"]').forEach((r) => { r.onchange = updateDetails; });
+
+        root.querySelector('#promo-pay-form').onsubmit = (e) => {
+          e.preventDefault();
+          const adTitle = root.querySelector('#promo-ad-title').value.trim();
+          const method = root.querySelector('input[name="payMethod"]:checked').value;
+          savePromo({
+            id: 'pr_' + Date.now(),
+            adId: opts.adId || null,
+            adTitle,
+            method,
+            amount: 100,
+            createdAt: Date.now(),
+          });
+          close();
+          toast('★ Оплата 100 ₽ принята! Объявление поднято в ТОП просмотров на 7 дней.');
+          renderMePromos();
+        };
+      },
+    });
+  }
+
   async function renderSettings() {
     if (!state.me) { app.innerHTML = Views.loginRequired('Войдите, чтобы изменить профиль.'); return; }
     app.innerHTML = Views.settings({ me: state.me });
+    renderMePromos();
     $('#profile-form').onsubmit = async (e) => {
       e.preventDefault();
       const fd = new FormData(e.target);
@@ -3027,7 +3150,21 @@ if (typeof window.EventSource === 'function') {
   }
 
   // Глобальный делегированный обработчик (для карточек, отрисованных позже)
+  document.addEventListener('change', (e) => {
+    if (e.target && e.target.id === 'f-promote') {
+      const box = $('#f-promote-methods');
+      if (box) box.style.display = e.target.checked ? 'flex' : 'none';
+    }
+  });
+
   document.addEventListener('click', async (e) => {
+    const promoBtn = e.target.closest('[data-open-promo]');
+    if (promoBtn) {
+      e.preventDefault();
+      openPromoPaymentModal();
+      return;
+    }
+
     const storiesBtn = e.target.closest('[data-stories-dev]');
     if (storiesBtn) {
       e.preventDefault();
