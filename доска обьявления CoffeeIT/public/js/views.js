@@ -446,6 +446,26 @@
             ${d.price != null ? `<span>Цена: <b>${esc(price(d.price))}</b></span>` : ''}
             <span>С кем: <a href="/user/${esc(d.peer.id)}" data-link style="color:var(--primary)">${esc(d.peer.name)}</a></span>
           </div>
+          <div class="field">
+            <label>Платное продвижение</label>
+            <div style="padding:14px;border-radius:14px;background:linear-gradient(135deg,rgba(245,158,11,.10),rgba(22,163,74,.08));border:1px solid rgba(245,158,11,.35);display:flex;flex-direction:column;gap:10px">
+              <label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer;font-weight:600">
+                <input type="checkbox" id="f-promote" name="promote" style="margin-top:3px;flex-shrink:0"/>
+                <span>Поднять объявление в ТОП просмотров — <b style="color:var(--primary)">100 ₽</b> <span class="small muted" style="font-weight:400">(на 7 дней, больше просмотров)</span></span>
+              </label>
+              <div id="f-promote-methods" style="display:none;flex-direction:column;gap:8px;padding-left:24px">
+                <div class="small muted">Способ оплаты:</div>
+                <div style="display:flex;gap:12px;flex-wrap:wrap">
+                  <label style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-size:13.5px">
+                    <input type="radio" name="promoMethod" value="sbp" checked/> СБП (по номеру / QR)
+                  </label>
+                  <label style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-size:13.5px">
+                    <input type="radio" name="promoMethod" value="card"/> Перевод на карту
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
           <div class="actions">
             <a class="btn btn-sm" href="/chats/${esc(d.chatId)}" data-link>Открыть чат</a>
             ${!d.mine && d.status === 'proposed' ? `<button class="btn btn-sm btn-primary" data-deal-status="${esc(d.id)}" data-next="confirmed">${icons.check} Подтвердить</button>
