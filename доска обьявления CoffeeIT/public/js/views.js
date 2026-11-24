@@ -76,38 +76,44 @@
         </div>
       </div>
 
-      <div class="card" style="padding:14px 16px;margin-bottom:16px">
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;flex-wrap:wrap">
-          <div style="display:flex;align-items:center;gap:8px">
-            <b style="font-size:15px">Сторис</b>
-            <span style="font-size:11px;padding:2px 8px;border-radius:999px;background:linear-gradient(135deg,#f58529,#dd2a7b,#8134af);color:#fff;font-weight:600">В разработке</span>
+      <div class="stories-card">
+        <div class="stories-head">
+          <div style="display:flex;align-items:center;gap:10px">
+            <b style="font-size:16px">Сторис CoffeeIT</b>
+            <span class="dev-pill"><span class="dev-dot"></span>В разработке</span>
           </div>
-          <span class="small muted">Фото, видео, просмотры и лайки — скоро в CoffeeIT</span>
+          <span class="small muted">Видео, фото, просмотры и лайки — скоро запуск</span>
         </div>
-        <div style="display:flex;gap:14px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch">
-          <button type="button" data-stories-dev style="background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;min-width:74px;color:var(--text)">
-            <span style="width:62px;height:62px;border-radius:50%;padding:3px;background:linear-gradient(135deg,#f58529,#dd2a7b,#8134af);display:flex;align-items:center;justify-content:center">
-              <span style="width:100%;height:100%;border-radius:50%;background:var(--card);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;color:#dd2a7b">+</span>
-            </span>
-            <span style="font-size:12px;white-space:nowrap">Выложить</span>
+        <div class="stories-row">
+          <button type="button" class="story-item" data-stories-dev>
+            <span class="story-ring"><span class="story-inner">
+              <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+            </span></span>
+            <span class="story-label">Выложить</span>
           </button>
-          <button type="button" data-stories-dev style="background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;min-width:74px;color:var(--text)">
-            <span style="width:62px;height:62px;border-radius:50%;padding:3px;background:linear-gradient(135deg,#f58529,#dd2a7b,#8134af);display:flex;align-items:center;justify-content:center">
-              <span style="width:100%;height:100%;border-radius:50%;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:22px">🎬</span>
-            </span>
-            <span style="font-size:12px;white-space:nowrap">Видео</span>
+          <button type="button" class="story-item" data-stories-dev>
+            <span class="story-ring"><span class="story-inner soft">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="14" height="12" rx="2.5"/><path d="m16 10 6-3v10l-6-3z"/></svg>
+            </span></span>
+            <span class="story-label">Видео</span>
           </button>
-          <button type="button" data-stories-dev style="background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;min-width:74px;color:var(--text)">
-            <span style="width:62px;height:62px;border-radius:50%;padding:3px;background:linear-gradient(135deg,#f58529,#dd2a7b,#8134af);display:flex;align-items:center;justify-content:center">
-              <span style="width:100%;height:100%;border-radius:50%;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:22px">📸</span>
-            </span>
-            <span style="font-size:12px;white-space:nowrap">Фото</span>
+          <button type="button" class="story-item" data-stories-dev>
+            <span class="story-ring"><span class="story-inner soft">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            </span></span>
+            <span class="story-label">Фото</span>
           </button>
-          <button type="button" data-stories-dev style="background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;min-width:74px;color:var(--text)">
-            <span style="width:62px;height:62px;border-radius:50%;padding:3px;background:linear-gradient(135deg,#f58529,#dd2a7b,#8134af);display:flex;align-items:center;justify-content:center">
-              <span style="width:100%;height:100%;border-radius:50%;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:22px">📊</span>
-            </span>
-            <span style="font-size:12px;white-space:nowrap">Статистика</span>
+          <button type="button" class="story-item" data-stories-dev>
+            <span class="story-ring"><span class="story-inner soft">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.5-7-9a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 4.5-7 9-7 9Z"/></svg>
+            </span></span>
+            <span class="story-label">Лайки</span>
+          </button>
+          <button type="button" class="story-item" data-stories-dev>
+            <span class="story-ring"><span class="story-inner soft">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 14 4-4 3 3 5-6"/></svg>
+            </span></span>
+            <span class="story-label">Статистика</span>
           </button>
         </div>
       </div>
@@ -513,27 +519,27 @@
           <a class="btn" href="/my" data-link>Мои объявления</a>
         </div>
       </form>
-      <div class="card card-pad" style="margin-top:18px">
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;flex-wrap:wrap">
+      <div class="stories-card" style="margin-top:18px;padding:18px 20px">
+        <div class="stories-head">
           <div class="card-title" style="margin:0">Сторис и статистика</div>
-          <span style="font-size:11px;padding:3px 10px;border-radius:999px;background:linear-gradient(135deg,#f58529,#dd2a7b,#8134af);color:#fff;font-weight:600">В разработке</span>
+          <span class="dev-pill"><span class="dev-dot"></span>В разработке</span>
         </div>
         <p class="small muted" style="margin-bottom:14px">Скоро здесь можно будет выкладывать фото и видео в сторис как в Instagram и отслеживать статистику по каждому ролику.</p>
-        <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:14px">
-          <div style="padding:12px;border-radius:12px;background:var(--bg2);text-align:center">
-            <div style="font-size:20px;font-weight:800">0</div>
-            <div class="small muted">👁 Просмотры</div>
+        <div class="story-stat-grid">
+          <div class="story-stat-tile">
+            <div class="story-stat-num">0</div>
+            <div class="small muted">Просмотры</div>
           </div>
-          <div style="padding:12px;border-radius:12px;background:var(--bg2);text-align:center">
-            <div style="font-size:20px;font-weight:800">0</div>
-            <div class="small muted">❤️ Лайки</div>
+          <div class="story-stat-tile">
+            <div class="story-stat-num">0</div>
+            <div class="small muted">Лайки</div>
           </div>
-          <div style="padding:12px;border-radius:12px;background:var(--bg2);text-align:center">
-            <div style="font-size:20px;font-weight:800">0</div>
-            <div class="small muted">🎬 Фото/видео</div>
+          <div class="story-stat-tile">
+            <div class="story-stat-num">0</div>
+            <div class="small muted">Фото и видео</div>
           </div>
         </div>
-        <button type="button" class="btn" data-stories-dev style="border-color:rgba(221,42,123,.4);color:#dd2a7b">+ Выложить фото / видео (в разработке)</button>
+        <button type="button" class="btn btn-story-grad" data-stories-dev>+ Выложить фото / видео (скоро)</button>
       </div>
     </div>`;
   }
