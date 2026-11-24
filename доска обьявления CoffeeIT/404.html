@@ -2764,7 +2764,7 @@ if (typeof window.EventSource === 'function') {
             </div>
           </div>
           <div id="promo-pay-details" style="padding:12px;border-radius:12px;background:var(--bg2);border:1px solid var(--border);font-size:13px;line-height:1.5"></div>
-          <button class="btn btn-primary" type="submit">Я оплатил 100 ₽ — активировать ТОП</button>
+          <button class="btn btn-primary" type="submit">Перейти к оплате 100 ₽</button>
         </form>`,
       onMount: (root, close) => {
         const details = root.querySelector('#promo-pay-details');
@@ -2779,21 +2779,24 @@ if (typeof window.EventSource === 'function') {
         updateDetails();
         root.querySelectorAll('input[name="payMethod"]').forEach((r) => { r.onchange = updateDetails; });
 
-        root.querySelector('#promo-pay-form').onsubmit = (e) => {
+        root.querySelector('#promo-pay-form').onsubmit = async (e) => {
           e.preventDefault();
           const adTitle = root.querySelector('#promo-ad-title').value.trim();
           const method = root.querySelector('input[name="payMethod"]:checked').value;
-          savePromo({
-            id: 'pr_' + Date.now(),
-            adId: opts.adId || null,
-            adTitle,
-            method,
-            amount: 100,
-            createdAt: Date.now(),
-          });
-          close();
-          toast('★ Оплата 100 ₽ принята! Объявление поднято в ТОП просмотров на 7 дней.');
-          renderMePromos();
+          const submitBtn = root.querySelector('[type="submit"]');
+          submitBtn.disabled = true;
+          submitBtn.textContent = 'Создаём платёж…';
+          try {
+            const r = await API.post('/api/promo/create', { adId: opts.adId || null, adTitle, method });
+            if (r && r.confirmationUrl) {
+              window.location.href = r.confirmationUrl;
+              return;
+            }
+          } catch (err) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Оплатить 100 ₽';
+            toast(err.message || 'Для реальной оплаты через СБП нужен запущенный сервер с ключами ЮKassa (YOOKASSA_SHOP_ID и YOOKASSA_SECRET_KEY).', 'err', 7000);
+          }
         };
       },
     });
