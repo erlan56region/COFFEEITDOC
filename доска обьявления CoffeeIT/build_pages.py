@@ -850,8 +850,7 @@ if (before !== null) fs.writeFileSync(dbPath, before);
         body,
     )
     body = re.sub(r'<script src="/js/[a-z]+\.js"></script>\s*', '', body)
-    # вставляем баннер сразу после <body>
-    body = body.replace('<body>\n', '<body>\n' + BANNER, 1)
+    # без верхнего демо-баннера
     # меняем title (уже правильный) и убираем дубли meta, если появятся
     body = body.replace('</body>', f'''
 <script>
