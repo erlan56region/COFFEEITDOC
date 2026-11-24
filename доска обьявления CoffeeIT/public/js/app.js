@@ -418,7 +418,11 @@
           const r = await API.post('/api/ads', payload);
           toast('Объявление опубликовано');
           navigate('/ad/' + r.ad.id);
-          if (promoteChecked) openPromoPaymentModal({ adId: r.ad.id, adTitle: payload.title, method: promoMethod });
+          if (promoteChecked) {
+            openPromoPaymentModal({ adId: r.ad.id, adTitle: payload.title, method: promoMethod });
+          } else {
+            openSupportProjectModal(payload.title);
+          }
         }
       } catch (err) {
         // не сохранилось (нет места / хранилище недоступно) — сообщение держим дольше,
@@ -575,6 +579,71 @@
             toast('Спасибо за отзыв!');
             render(true);
           } catch (e) { toast(e.message, 'err'); }
+        };
+      },
+    });
+  }
+
+  /* ---- поддержка проекта / благотворительность напрямую ---- */
+  function openSupportProjectModal(adTitle) {
+    openModal({
+      title: 'Объявление опубликовано!',
+      body: `
+        <div style="display:flex;flex-direction:column;gap:14px;font-size:14px;line-height:1.55">
+          <div style="padding:14px 16px;border-radius:14px;background:linear-gradient(135deg,rgba(22,163,74,.12),rgba(245,158,11,.10));border:1px solid rgba(22,163,74,.28)">
+            <div style="font-size:16px;font-weight:800;margin-bottom:4px">🎉 Ваше объявление уже на сайте!</div>
+            ${adTitle ? `<div class="small muted">«${UI.esc(adTitle)}»</div>` : ''}
+          </div>
+          <p><b>Поддержать проект CoffeeIT и благотворительность напрямую</b><br/>
+          <span class="muted">Размещение объявлений у нас бесплатное. Если проект оказался полезен и вы хотите поддержать его развитие и благотворительные инициативы напрямую — выберите удобную сумму:</span></p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap" id="support-amounts">
+            <button type="button" class="btn btn-sm" data-sup-sum="50">50 ₽</button>
+            <button type="button" class="btn btn-sm btn-primary" data-sup-sum="100">100 ₽</button>
+            <button type="button" class="btn btn-sm" data-sup-sum="300">300 ₽</button>
+            <button type="button" class="btn btn-sm" data-sup-sum="500">500 ₽</button>
+          </div>
+          <div class="field">
+            <label for="support-custom-sum">Или своя сумма (₽)</label>
+            <input class="input" id="support-custom-sum" type="number" min="10" step="10" value="100"/>
+          </div>
+          <div style="padding:12px 14px;border-radius:12px;background:var(--bg2);border:1px solid var(--border);font-size:13.5px;line-height:1.55">
+            <b>Прямая поддержка и благотворительность (перевод на карту):</b>
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin:8px 0;padding:10px 12px;border-radius:10px;background:var(--card);border:1px solid var(--border);flex-wrap:wrap">
+              <code style="font-size:16px;font-weight:800;letter-spacing:.06em">2204 1801 2664 7940</code>
+              <button type="button" class="btn btn-sm" id="support-copy-card">Скопировать</button>
+            </div>
+            <span class="muted small">Назначение: «Поддержка проекта CoffeeIT». Любая сумма добровольна.</span>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button type="button" class="btn btn-primary" id="support-confirm-btn" style="flex:1">❤️ Я перевёл поддержку</button>
+            <button type="button" class="btn" id="support-skip-btn" style="flex:1">Перейти к объявлению</button>
+          </div>
+        </div>`,
+      onMount: (root, close) => {
+        const input = root.querySelector('#support-custom-sum');
+        root.querySelectorAll('[data-sup-sum]').forEach((b) => {
+          b.onclick = () => {
+            root.querySelectorAll('[data-sup-sum]').forEach((x) => x.classList.remove('btn-primary'));
+            b.classList.add('btn-primary');
+            input.value = b.dataset.supSum;
+          };
+        });
+        const copyBtn = root.querySelector('#support-copy-card');
+        if (copyBtn) {
+          copyBtn.onclick = async () => {
+            try {
+              await navigator.clipboard.writeText('2204180126647940');
+              toast('Номер карты скопирован: 2204 1801 2664 7940');
+            } catch (e) {
+              toast('2204 1801 2664 7940');
+            }
+          };
+        }
+        root.querySelector('#support-skip-btn').onclick = () => close();
+        root.querySelector('#support-confirm-btn').onclick = () => {
+          const sum = Number(input.value) || 100;
+          close();
+          toast(`❤️ Спасибо за поддержку проекта CoffeeIT (${sum} ₽)!`);
         };
       },
     });
@@ -1077,6 +1146,13 @@
   });
 
   document.addEventListener('click', async (e) => {
+    const supBtn = e.target.closest('[data-support-project]');
+    if (supBtn) {
+      e.preventDefault();
+      openSupportProjectModal('');
+      return;
+    }
+
     const promoBtn = e.target.closest('[data-open-promo]');
     if (promoBtn) {
       e.preventDefault();
