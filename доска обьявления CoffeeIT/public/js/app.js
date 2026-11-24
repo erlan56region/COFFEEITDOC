@@ -1052,7 +1052,10 @@
     const promoBtn = e.target.closest('[data-open-promo]');
     if (promoBtn) {
       e.preventDefault();
-      openPromoPaymentModal();
+      openPromoPaymentModal({
+        adId: promoBtn.dataset.promoAdId || null,
+        adTitle: promoBtn.dataset.promoAdTitle || '',
+      });
       return;
     }
 

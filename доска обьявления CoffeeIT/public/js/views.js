@@ -14,14 +14,23 @@
       </div>
     </div>`;
 
+  function isAdPromoted(ad) {
+    try {
+      const list = JSON.parse(localStorage.getItem('coffeeit:promos:v1') || '[]');
+      return list.some(p => (p.adId && p.adId === ad.id) || (p.adTitle && p.adTitle === ad.title));
+    } catch (e) { return false; }
+  }
+
   function adCard(ad, opts) {
     if (!ad) return '';
     const o = opts || {};
     const cover = ad.photos && ad.photos[0];
+    const promoted = isAdPromoted(ad);
     return `
     <article class="ad-card" data-ad-id="${esc(ad.id)}">
       <a class="ad-thumb" href="/ad/${esc(ad.id)}" data-link>
         ${cover ? `<img src="${esc(cover)}" alt="${esc(ad.title)}" loading="lazy"/>` : noPhoto(ad.title)}
+        ${promoted && (!ad.status || ad.status === 'active') ? `<span class="pill gold" style="position:absolute;left:8px;top:8px;font-weight:700">★ ТОП</span>` : ''}
         ${ad.status && ad.status !== 'active' ? `<span class="pill ${ad.status === 'sold' ? 'gold' : 'red'}" style="position:absolute;left:8px;top:8px">${ad.status === 'sold' ? 'Продано' : 'В архиве'}</span>` : ''}
       </a>
       ${o.showFav !== false && ad.status === 'active' ? `
@@ -242,6 +251,10 @@
               </div>
             </div>
             <div style="display:flex;flex-direction:column;gap:8px;margin-top:14px">
+              ${ad.status === 'active' ? (isAdPromoted(ad)
+                ? `<div style="padding:10px 12px;border-radius:12px;background:rgba(245,158,11,.14);border:1px solid rgba(245,158,11,.35);color:#b45309;font-weight:700;font-size:13.5px;text-align:center">★ Объявление в ТОПе просмотров</div>`
+                : `<button type="button" class="btn" data-open-promo data-promo-ad-id="${esc(ad.id)}" data-promo-ad-title="${esc(ad.title)}" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border:none;font-weight:700">★ Продвинуть в ТОП — 100 ₽</button>`
+              ) : ''}
               ${isMine ? `
                 ${ad.status === 'active' ? `<a class="btn btn-primary" href="/edit/${esc(ad.id)}" data-link>Редактировать</a>` : ''}
                 <a class="btn" href="/chats" data-link>Сообщения по объявлению</a>
