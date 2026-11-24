@@ -661,12 +661,134 @@
     });
   }
 
+  async function openTelegramAuthModal() {
+    let startData = null;
+    try {
+      startData = await API.post('/api/auth/tg-start', {});
+    } catch (e) {
+      startData = { configured: false };
+    }
+
+    if (startData && startData.configured && startData.botUrl) {
+      let pollTimer = null;
+      let verifiedData = null;
+      openModal({
+        title: 'Подтверждение номера через Telegram (бесплатно)',
+        body: `
+          <form id="tg-live-form" style="display:flex;flex-direction:column;gap:12px">
+            <div style="padding:10px 12px;border-radius:10px;background:var(--bg2);font-size:13px;border-left:4px solid #229ED9">
+              1. Нажмите «Открыть Telegram-бота».<br/>
+              2. В боте нажмите кнопку <b>«📱 Поделиться номером»</b>.<br/>
+              3. Вернитесь сюда — номер подтвердится автоматически (0 ₽).
+            </div>
+            <a class="btn" href="${UI.esc(startData.botUrl)}" target="_blank" rel="noopener" style="background:#229ED9;color:#fff;border-color:#229ED9;justify-content:center">
+              ✈ Открыть Telegram-бота
+            </a>
+            <div id="tg-status-box" class="small muted">Ожидание подтверждения номера в Telegram…</div>
+            <label style="display:flex;gap:10px;align-items:flex-start;font-size:13px;line-height:1.45;cursor:pointer">
+              <input type="checkbox" id="tg-consent" style="margin-top:3px;flex-shrink:0" required/>
+              <span>Я даю согласие на обработку моих персональных данных в CoffeeIT в соответствии с <a href="#" data-open-privacy style="color:var(--primary);text-decoration:underline">Политикой конфиденциальности</a> (ст. 9 152-ФЗ).</span>
+            </label>
+            <button class="btn btn-primary" id="tg-finish-btn" type="submit" disabled>Завершить вход</button>
+          </form>`,
+        onMount: (root, close) => {
+          const statusBox = root.querySelector('#tg-status-box');
+          const finishBtn = root.querySelector('#tg-finish-btn');
+          pollTimer = setInterval(async () => {
+            try {
+              const st = await API.get('/api/auth/tg-status', { token: startData.token });
+              if (st && st.status === 'verified') {
+                clearInterval(pollTimer);
+                verifiedData = st;
+                statusBox.innerHTML = `<b style="color:var(--primary)">✅ Номер подтверждён:</b> ${UI.esc(st.phone)} (${UI.esc(st.name || '')})`;
+                finishBtn.disabled = false;
+              } else if (st && st.status === 'expired') {
+                clearInterval(pollTimer);
+                statusBox.textContent = 'Сессия истекла — закройте окно и попробуйте снова.';
+              }
+            } catch (e) {}
+          }, 2000);
+
+          root.querySelector('#tg-live-form').onsubmit = async (e) => {
+            e.preventDefault();
+            if (!verifiedData) return toast('Сначала поделитесь номером в Telegram-боте', 'err');
+            if (!root.querySelector('#tg-consent').checked) return toast('Необходимо согласие (152-ФЗ)', 'err');
+            try {
+              await API.post('/api/auth/tg-complete', { token: startData.token, name: verifiedData.name });
+              saveConsentLog('telegram_bot', verifiedData.phone);
+              clearInterval(pollTimer);
+              close();
+              await loadMe();
+              toast('Номер подтверждён через Telegram!');
+              navigate('/');
+            } catch (err) {
+              toast(err.message, 'err');
+            }
+          };
+        },
+        onClose: () => { if (pollTimer) clearInterval(pollTimer); },
+      });
+      return;
+    }
+
+    // Статическая версия (GitHub Pages) или бот ещё не настроен на сервере
+    openModal({
+      title: 'Подтверждение номера через Telegram (бесплатно)',
+      body: `
+        <form id="tg-demo-form" style="display:flex;flex-direction:column;gap:12px">
+          <div style="padding:10px 12px;border-radius:10px;background:var(--bg2);font-size:13px;border-left:4px solid #229ED9">
+            На сервере (<code>npm start</code> с <code>TG_BOT_TOKEN</code> и <code>TG_BOT_USERNAME</code>) здесь открывается ваш Telegram-бот с кнопкой <b>«Поделиться номером»</b> (0 ₽).<br/>
+            Сейчас включён локальный режим проверки — вы можете сразу протестировать вход:
+          </div>
+          <div class="field">
+            <label for="tg-name">Имя из Telegram</label>
+            <input class="input" id="tg-name" name="name" value="Пользователь Telegram" required/>
+          </div>
+          <div class="field">
+            <label for="tg-phone">Номер телефона</label>
+            <input class="input" id="tg-phone" name="phone" value="+79997778899" required/>
+          </div>
+          <label style="display:flex;gap:10px;align-items:flex-start;font-size:13px;line-height:1.45;cursor:pointer">
+            <input type="checkbox" id="tg-demo-consent" style="margin-top:3px;flex-shrink:0" required/>
+            <span>Я даю согласие на обработку моих персональных данных в CoffeeIT в соответствии с <a href="#" data-open-privacy style="color:var(--primary);text-decoration:underline">Политикой конфиденциальности</a> (ст. 9 152-ФЗ).</span>
+          </label>
+          <button class="btn btn-primary" type="submit">Подтвердить номер и войти</button>
+        </form>`,
+      onMount: (root, close) => {
+        root.querySelector('#tg-demo-form').onsubmit = async (e) => {
+          e.preventDefault();
+          if (!root.querySelector('#tg-demo-consent').checked) return toast('Необходимо согласие (152-ФЗ)', 'err');
+          const fd = new FormData(e.target);
+          const name = String(fd.get('name') || '').trim();
+          const phone = String(fd.get('phone') || '').trim();
+          const pass = 'tg_bot_verified_2026';
+          try {
+            try {
+              await API.post('/api/auth/register', { name, phone, password: pass, city: 'Москва' });
+            } catch (regErr) {
+              await API.post('/api/auth/login', { phone, password: pass });
+            }
+            saveConsentLog('telegram_bot', phone);
+            close();
+            await loadMe();
+            toast('Вход через Telegram выполнен!');
+            navigate('/');
+          } catch (err) {
+            toast(err.message, 'err');
+          }
+        };
+      },
+    });
+  }
+
   /* ---- вход ---- */
   function renderAuth() {
     app.innerHTML = Views.auth({ meta: state.meta });
     $$('[data-oauth]').forEach((btn) => {
       btn.onclick = () => openOAuthModal(btn.dataset.oauth);
     });
+    const tgBtn = $('[data-tg-auth]');
+    if (tgBtn) tgBtn.onclick = () => openTelegramAuthModal();
     $('#login-form').onsubmit = async (e) => {
       e.preventDefault();
       const fd = new FormData(e.target);

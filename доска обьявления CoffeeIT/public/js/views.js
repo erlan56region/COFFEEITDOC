@@ -528,6 +528,10 @@
             <span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:6px;background:#fff;color:#0077ff;font-weight:800;font-size:11px">VK</span>
             <span>Войти с VK ID</span>
           </button>
+          <button type="button" class="btn" data-tg-auth style="background:#229ED9;color:#fff;border-color:#229ED9;flex:1;min-width:220px;justify-content:center;gap:10px;padding:12px 16px">
+            <span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:#fff;color:#229ED9;font-weight:800;font-size:12px">✈</span>
+            <span>Подтвердить номер через Telegram</span>
+          </button>
         </div>
       </div>
 

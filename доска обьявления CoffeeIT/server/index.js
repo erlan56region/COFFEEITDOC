@@ -7,7 +7,24 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const url = require('url');
+const crypto = require('crypto');
 const { load, db, save, UPLOAD_DIR } = require('./db');
+
+const tgSessions = new Map();
+const tgChatToToken = new Map();
+
+async function tgApi(botToken, method, payload) {
+  try {
+    const res = await fetch(`https://api.telegram.org/bot${botToken}/${method}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    return await res.json();
+  } catch (e) {
+    return null;
+  }
+}
 const { seed } = require('./seed');
 const S = require('./store');
 
@@ -193,6 +210,112 @@ async function api(req, res, pathname, query) {
       save();
       res.setHeader('Set-Cookie', 'sid=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0');
       return json(res, 200, { ok: true });
+    }
+
+    /* --- бесплатное подтверждение номера через Telegram-бота (request_contact) --- */
+    if (a1 === 'tg-start' && method === 'POST') {
+      const botToken = process.env.TG_BOT_TOKEN || '';
+      const botUser = (process.env.TG_BOT_USERNAME || '').replace(/^@/, '');
+      const token = crypto.randomBytes(16).toString('hex');
+      tgSessions.set(token, { status: 'pending', createdAt: Date.now() });
+      const configured = Boolean(botToken && botUser);
+      return json(res, 200, {
+        token,
+        configured,
+        botUrl: configured ? `https://t.me/${botUser}?start=auth_${token}` : null,
+      });
+    }
+    if (a1 === 'tg-status' && method === 'GET') {
+      const token = url.searchParams.get('token') || '';
+      const s = tgSessions.get(token);
+      if (!s || Date.now() - s.createdAt > 10 * 60 * 1000) {
+        tgSessions.delete(token);
+        return json(res, 200, { status: 'expired' });
+      }
+      return json(res, 200, { status: s.status, phone: s.phone || null, name: s.name || null });
+    }
+    if (a1 === 'tg-webhook' && method === 'POST') {
+      const botToken = process.env.TG_BOT_TOKEN || '';
+      if (!botToken) return json(res, 200, { ok: true });
+      const update = await readBody(req).catch(() => ({}));
+      const msg = update && update.message;
+      if (msg && msg.chat && msg.chat.id) {
+        const chatId = msg.chat.id;
+        const text = String(msg.text || '').trim();
+        if (text.startsWith('/start auth_')) {
+          const token = text.slice('/start auth_'.length).trim();
+          const s = tgSessions.get(token);
+          if (s && s.status === 'pending') {
+            tgChatToToken.set(chatId, token);
+            await tgApi(botToken, 'sendMessage', {
+              chat_id: chatId,
+              text: 'Нажмите кнопку ниже, чтобы подтвердить ваш номер телефона для входа в CoffeeIT (бесплатно):',
+              reply_markup: {
+                keyboard: [[{ text: '📱 Поделиться номером', request_contact: true }]],
+                resize_keyboard: true,
+                one_time_keyboard: true,
+              },
+            });
+          } else {
+            await tgApi(botToken, 'sendMessage', {
+              chat_id: chatId,
+              text: 'Ссылка для входа устарела. Начните вход заново на сайте CoffeeIT.',
+            });
+          }
+        } else if (msg.contact && msg.from && msg.contact.user_id === msg.from.id) {
+          const token = tgChatToToken.get(chatId);
+          const s = token && tgSessions.get(token);
+          if (s && s.status === 'pending') {
+            const phone = S.normalizePhone(msg.contact.phone_number);
+            const name = [msg.contact.first_name, msg.contact.last_name].filter(Boolean).join(' ').trim() || 'Пользователь Telegram';
+            if (phone) {
+              s.status = 'verified';
+              s.phone = phone;
+              s.name = name;
+              tgChatToToken.delete(chatId);
+              await tgApi(botToken, 'sendMessage', {
+                chat_id: chatId,
+                text: '✅ Номер подтверждён! Вернитесь на сайт CoffeeIT, чтобы завершить вход.',
+                reply_markup: { remove_keyboard: true },
+              });
+            }
+          }
+        }
+      }
+      return json(res, 200, { ok: true });
+    }
+    if (a1 === 'tg-complete' && method === 'POST') {
+      const b = await readBody(req);
+      const token = String(b.token || '');
+      const s = tgSessions.get(token);
+      if (!s || s.status !== 'verified' || !s.phone) {
+        return json(res, 400, { error: 'Номер ещё не подтверждён в Telegram' });
+      }
+      tgSessions.delete(token);
+      const d = db();
+      let u = d.users.find(x => x.phone === s.phone);
+      if (!u) {
+        u = {
+          id: S.id('u'),
+          name: String(b.name || s.name || 'Пользователь').trim().slice(0, 60),
+          phone: s.phone,
+          city: String(b.city || 'Москва').trim().slice(0, 60),
+          password: S.hashPassword(crypto.randomBytes(16).toString('hex')),
+          avatar: null,
+          about: '',
+          ratingSum: 0,
+          ratingCount: 0,
+          createdAt: Date.now(),
+          verified: true,
+        };
+        d.users.push(u);
+      } else {
+        u.verified = true;
+      }
+      const sid = S.login(u);
+      save();
+      res.setHeader('Set-Cookie', `sid=${sid}; Path=/; HttpOnly; SameSite=Lax; Max-Age=2592000`);
+      return json(res, 200, { user: S.publicUser(u) });
     }
   }
 
