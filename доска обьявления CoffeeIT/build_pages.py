@@ -707,13 +707,19 @@ PAGE_HEAD = '''<!DOCTYPE html>
 
 BASE_SCRIPT = '''<script>
 (function () {
-  // GitHub Pages публикует проект в подкаталог /<repo>/: запоминаем базу путей.
+  // GitHub Pages публикует проект в подкаталог /<repo>/ или /<repo>/<folder>/: запоминаем базу путей.
   var path = location.pathname || '/';
-  // /kopeka/  |  /kopeka/index.html  |  /kopeka/auth.html  ->  '/kopeka';  корень домена -> ''
   var seg = path.split('/').filter(Boolean);
-  if (path.charAt(path.length - 1) !== '/' && /\.[a-z0-9]+$/i.test(path)) seg.pop(); // отрезаем файл
-  if (seg.length > 1) seg = seg.slice(0, seg.length - 1); // остаётся только первый сегмент (база)
-  var base = seg.length ? '/' + seg[0] : '';
+  if (path.charAt(path.length - 1) !== '/' && /\\.[a-z0-9]+$/i.test(path)) seg.pop(); // отрезаем .html файл
+  // Отрезаем известные SPA-маршруты с конца пути (/chats, /ad/a_1, /user/u_1, /edit/a_1 и т.п.)
+  var singleRoutes = { chats: 1, deals: 1, favorites: 1, auth: 1, new: 1, my: 1, me: 1, ad: 1, user: 1, edit: 1 };
+  var paramRoutes = { ad: 1, user: 1, edit: 1 };
+  if (seg.length >= 2 && paramRoutes[seg[seg.length - 2]]) {
+    seg = seg.slice(0, seg.length - 2);
+  } else if (seg.length >= 1 && singleRoutes[seg[seg.length - 1]]) {
+    seg = seg.slice(0, seg.length - 1);
+  }
+  var base = seg.length ? '/' + seg.join('/') : '';
   if (base === '/' || base === '/index.html') base = '';
   window.__BASE_PATH__ = base;
   document.addEventListener('DOMContentLoaded', function () {
