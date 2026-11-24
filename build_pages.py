@@ -838,7 +838,11 @@ if (before !== null) fs.writeFileSync(dbPath, before);
 
     # html без внешних <link>/<script>
     body = index_html
-    body = re.sub(r'<link rel="stylesheet" href="/css/app\.css"/>\s*', BASE_SCRIPT, body)
+    body = re.sub(
+        r'<link rel="stylesheet" href="/css/app\.css"/>\s*',
+        lambda _: f'<style>\n{css}\n</style>\n{BASE_SCRIPT}',
+        body,
+    )
     body = re.sub(r'<script src="/js/[a-z]+\.js"></script>\s*', '', body)
     # вставляем баннер сразу после <body>
     body = body.replace('<body>\n', '<body>\n' + BANNER, 1)
