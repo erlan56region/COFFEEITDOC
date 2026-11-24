@@ -3,6 +3,31 @@
   const { toast, modal, confirmDialog, esc, price } = UI;
   const app = document.getElementById('app');
 
+  function openModal({ title, body, actions, onMount, onClose }) {
+    const footer = Array.isArray(actions) && actions.length
+      ? actions.map((a, i) => `<button type="button" class="btn ${a.primary ? 'btn-primary' : ''}" data-modal-act="${i}">${esc(a.label || 'ОК')}</button>`).join('')
+      : '';
+    const close = modal({
+      title,
+      body,
+      footer,
+      onMount: (root, closeFn) => {
+        const wrappedClose = () => {
+          if (typeof onClose === 'function') { try { onClose(); } catch (e) {} }
+          closeFn();
+        };
+        if (Array.isArray(actions)) {
+          actions.forEach((a, i) => {
+            const btn = root.querySelector(`[data-modal-act="${i}"]`);
+            if (btn) btn.onclick = () => (a.onClick ? a.onClick(wrappedClose) : wrappedClose());
+          });
+        }
+        if (typeof onMount === 'function') onMount(root, wrappedClose);
+      },
+    });
+    return close;
+  }
+
   const state = {
     me: null,
     meta: null,
