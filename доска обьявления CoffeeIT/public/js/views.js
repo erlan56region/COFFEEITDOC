@@ -76,13 +76,22 @@
     return `
     <div class="container">
       <div class="hero">
-        <h1>Купить, продать и договориться — на CoffeeIT</h1>
-        <p>Объявления рядом с вами: фото, честные описания, переписка с продавцом и сделки в один клик — личная встреча, доставка или перевозка.</p>
+        <div class="hero-badge">Маркетплейс нового поколения · 0% комиссии</div>
+        <h1>Покупайте и продавайте<br/>красиво — на CoffeeIT</h1>
+        <p>Живые объявления рядом с вами, мгновенный чат, безопасные встречи, доставка и перевозка в один клик.</p>
         <div class="hero-actions">
-          <a class="btn btn-primary" href="/new" data-link>Разместить объявление</a>
-          <a class="btn" href="/chats" data-link>Мои сообщения</a>
+          <a class="btn btn-primary" href="/new" data-link>+ Разместить объявление</a>
+          <a class="btn" href="/chats" data-link>Сообщения</a>
           <a class="btn" href="/deals" data-link>Сделки</a>
         </div>
+      </div>
+
+      <div class="cat-strip" aria-label="Быстрые категории">
+        <a class="cat-pill ${!f.category ? 'active' : ''}" href="/" data-link><span>✨</span><b>Все</b></a>
+        ${(state.meta && state.meta.categories ? state.meta.categories : []).map((c) => {
+          const ico = { 'Электроника':'📱','Транспорт':'🚗','Недвижимость':'🏠','Для дома и дачи':'🛋️','Личные вещи':'🧥','Хобби и отдых':'🎸','Детские товары':'🍼','Работа':'💼','Услуги':'🛠️','Животные':'🐾' }[c] || '📦';
+          return `<a class="cat-pill ${f.category === c ? 'active' : ''}" href="/?category=${encodeURIComponent(c)}" data-link><span>${ico}</span><b>${esc(c)}</b></a>`;
+        }).join('')}
       </div>
 
       <div class="stories-card">
