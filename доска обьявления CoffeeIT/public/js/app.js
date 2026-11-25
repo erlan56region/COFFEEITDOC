@@ -1249,10 +1249,10 @@
   function openDesignsModal() {
     const cur = document.documentElement.getAttribute('data-design') || 'default';
     openModal({
-      title: '10 современных дизайнов CoffeeIT',
+      title: '13 современных дизайнов CoffeeIT',
       body: `
         <div style="display:flex;flex-direction:column;gap:12px">
-          <p class="small muted">Нажмите на любой дизайн — он <b>мгновенно применится</b> ко всему сайту с плавными анимациями. Подходит для iPhone, Android и планшетов.</p>
+          <p class="small muted">Нажмите на любой из <b>13 дизайнов</b> — он мгновенно применится ко всему сайту с плавными анимациями. Прокрутите список вниз, чтобы увидеть все 13 тем.</p>
           <div class="design-grid">
             ${DESIGNS.map(d => `
               <button type="button" class="design-tile ${cur === d.id ? 'active' : ''}" data-pick-design="${d.id}">
