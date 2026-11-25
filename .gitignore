@@ -13,3 +13,5 @@ package-lock.json
 pages/
 workspace-*/
 workspace-*.zip
+open-codesign/
+open-design/
