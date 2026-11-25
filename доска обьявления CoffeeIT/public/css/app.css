@@ -368,3 +368,60 @@ a,button,.btn,.icon-btn{
   border:1px solid var(--border);font-size:13px;line-height:1.45;
 }
 .story-feat b{display:block;margin-bottom:3px;font-size:13.5px}
+
+/* ---- 10 современных дизайнов с анимациями (CoffeeIT Design Engine) ---- */
+@keyframes meshFlow{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes cardReveal{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes neonPulse{0%,100%{box-shadow:0 0 14px rgba(0,245,212,.25)}50%{box-shadow:0 0 26px rgba(255,46,147,.38)}}
+
+html[data-design] .ad-card{animation:cardReveal .35s cubic-bezier(.22,1,.36,1) both;transition:transform .24s cubic-bezier(.22,1,.36,1),box-shadow .24s ease,border-color .24s ease}
+html[data-design] .ad-card:hover{transform:translateY(-4px)}
+
+/* 1. Apple Glass */
+html[data-design="apple"]{--bg:#f5f5f7;--bg2:#e8e8ed;--card:rgba(255,255,255,.78);--text:#1d1d1f;--muted:#6e6e73;--border:rgba(0,0,0,.08);--primary:#0071e3;--primary-h:#005bb5;--primary-soft:rgba(0,113,227,.10);--radius:22px;--shadow:0 12px 32px rgba(0,0,0,.08)}
+html[data-design="apple"] .header,html[data-design="apple"] .card,html[data-design="apple"] .ad-card{backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+
+/* 2. Stripe Mesh */
+html[data-design="stripe"]{--bg:#f6f9fc;--bg2:#e9eef5;--card:#ffffff;--text:#0a2540;--muted:#425466;--border:#e2e8f0;--primary:#635bff;--primary-h:#4b42e8;--primary-soft:rgba(99,91,255,.10);--radius:16px}
+html[data-design="stripe"] .hero{background:linear-gradient(125deg,#635bff,#00d4ff,#7a73ff,#ff7a59);background-size:260% 260%;animation:meshFlow 9s ease infinite;color:#fff;border:none}
+html[data-design="stripe"] .hero p,html[data-design="stripe"] .hero h1{color:#fff}
+
+/* 3. Linear Dark */
+html[data-design="linear"]{--bg:#08090a;--bg2:#121316;--card:#101114;--text:#f7f8f8;--muted:#8a8f98;--border:rgba(255,255,255,.09);--primary:#5e6ad2;--primary-h:#717ce0;--primary-soft:rgba(94,106,210,.16);--radius:14px;--shadow:0 16px 40px rgba(0,0,0,.55)}
+html[data-design="linear"] .hero{background:radial-gradient(circle at 20% 0%,rgba(94,106,210,.25),transparent 60%),#101114;border:1px solid rgba(255,255,255,.1)}
+
+/* 4. Airbnb Warm */
+html[data-design="airbnb"]{--bg:#fffaf6;--bg2:#f7efe8;--card:#ffffff;--text:#222222;--muted:#717171;--border:#ebebeb;--primary:#ff385c;--primary-h:#e01c43;--primary-soft:rgba(255,56,92,.10);--radius:24px;--shadow:0 10px 28px rgba(34,34,34,.08)}
+
+/* 5. Cyber Neon */
+html[data-design="neon"]{--bg:#070714;--bg2:#101026;--card:#0d0d20;--text:#f0f4ff;--muted:#9aa3c7;--border:rgba(0,245,212,.25);--primary:#00f5d4;--primary-h:#00d9bc;--primary-soft:rgba(0,245,212,.14);--radius:16px}
+html[data-design="neon"] .btn-primary{color:#070714;font-weight:800}
+html[data-design="neon"] .ad-card:hover{animation:neonPulse 2s infinite}
+
+/* 6. Neo-Brutalism */
+html[data-design="brutal"]{--bg:#fffdf0;--bg2:#ffde00;--card:#ffffff;--text:#111111;--muted:#3f3f46;--border:#111111;--primary:#ff6b9d;--primary-h:#ff4785;--primary-soft:#fff3b0;--radius:10px;--shadow:5px 5px 0 #111111}
+html[data-design="brutal"] .card,html[data-design="brutal"] .ad-card,html[data-design="brutal"] .btn{border:2px solid #111111 !important;box-shadow:4px 4px 0 #111111}
+html[data-design="brutal"] .ad-card:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 #111111}
+
+/* 7. Coffee Espresso */
+html[data-design="coffee"]{--bg:#faf6f1;--bg2:#efe6dc;--card:#fffdf9;--text:#2c1a0e;--muted:#7a5c47;--border:#e4d5c5;--primary:#b45309;--primary-h:#92400e;--primary-soft:rgba(180,83,9,.11);--radius:18px}
+
+/* 8. Telegram Breeze */
+html[data-design="telegram"]{--bg:#f0f7fc;--bg2:#e1effa;--card:#ffffff;--text:#0f172a;--muted:#526980;--border:#d4e6f5;--primary:#229ed9;--primary-h:#1a88be;--primary-soft:rgba(34,158,217,.12);--radius:20px}
+
+/* 9. Bento Minimal */
+html[data-design="bento"]{--bg:#f2f2f2;--bg2:#e6e6e6;--card:#ffffff;--text:#111111;--muted:#666666;--border:#dcdcdc;--primary:#ff4d00;--primary-h:#e04400;--primary-soft:rgba(255,77,0,.10);--radius:22px}
+
+/* 10. Emerald Fintech */
+html[data-design="emerald"]{--bg:#061612;--bg2:#0d261f;--card:#0a1f19;--text:#ecfdf5;--muted:#86b8a6;--border:rgba(245,197,66,.22);--primary:#10b981;--primary-h:#059669;--primary-soft:rgba(16,185,129,.16);--radius:18px;--shadow:0 14px 36px rgba(0,0,0,.45)}
+html[data-design="emerald"] .hero{background:linear-gradient(135deg,#0a261d,#061612 60%,rgba(245,197,66,.16));border:1px solid rgba(245,197,66,.28)}
+
+.design-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media (max-width:520px){.design-grid{grid-template-columns:1fr}}
+.design-tile{
+  padding:12px;border-radius:14px;border:1.5px solid var(--border);background:var(--card);color:var(--text);
+  cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:6px;transition:transform .16s ease,border-color .16s ease;
+}
+.design-tile:hover{transform:translateY(-2px);border-color:var(--primary)}
+.design-tile.active{border-color:var(--primary);box-shadow:0 0 0 2px var(--primary-soft)}
+.design-swatch{height:28px;border-radius:8px;width:100%}

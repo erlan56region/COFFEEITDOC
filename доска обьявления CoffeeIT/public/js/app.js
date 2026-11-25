@@ -1214,7 +1214,74 @@
     }
   });
 
+  /* ---- 10 современных дизайнов (переключатель в реальном времени) ---- */
+  const DESIGNS = [
+    { id: 'apple', name: '1. Apple Glass', desc: 'Матовое стекло iOS/macOS, мягкие тени, синий акцент', swatch: 'linear-gradient(135deg,#f5f5f7,#0071e3)' },
+    { id: 'stripe', name: '2. Stripe Mesh', desc: 'Живой анимированный градиент, индиго + циан', swatch: 'linear-gradient(135deg,#635bff,#00d4ff,#ff7a59)' },
+    { id: 'linear', name: '3. Linear Dark', desc: 'Глубокий обсидиан, тонкие линии, фиолетовое свечение', swatch: 'linear-gradient(135deg,#08090a,#5e6ad2)' },
+    { id: 'airbnb', name: '4. Airbnb Warm', desc: 'Тёплый editorial-стиль, коралловый акцент, мягкие карточки', swatch: 'linear-gradient(135deg,#fffaf6,#ff385c)' },
+    { id: 'neon', name: '5. Cyber Neon', desc: 'Ночной неон, бирюзово-розовое пульсирующее свечение', swatch: 'linear-gradient(135deg,#070714,#00f5d4,#ff2e93)' },
+    { id: 'brutal', name: '6. Neo-Brutalism', desc: 'Смелые контрастные рамки, жёсткие тени, стиль Gumroad/Figma', swatch: 'linear-gradient(135deg,#ffde00,#ff6b9d,#111)' },
+    { id: 'coffee', name: '7. Coffee Espresso', desc: 'Фирменный кофейный стиль: крем, эспрессо и карамель', swatch: 'linear-gradient(135deg,#faf6f1,#b45309,#2c1a0e)' },
+    { id: 'telegram', name: '8. Telegram Breeze', desc: 'Воздушный небесно-голубой мобильный стиль', swatch: 'linear-gradient(135deg,#f0f7fc,#229ed9)' },
+    { id: 'bento', name: '9. Bento Minimal', desc: 'Модульная швейцарская сетка + сигнальный оранжевый', swatch: 'linear-gradient(135deg,#f2f2f2,#ff4d00)' },
+    { id: 'emerald', name: '10. Emerald Fintech', desc: 'Тёмный изумруд и золото в стиле премиального финтеха', swatch: 'linear-gradient(135deg,#061612,#10b981,#f5c542)' },
+  ];
+
+  function applyDesign(id) {
+    const html = document.documentElement;
+    if (!id || id === 'default') {
+      html.removeAttribute('data-design');
+      try { localStorage.removeItem('coffeeit:design:v1'); } catch (e) {}
+    } else {
+      html.setAttribute('data-design', id);
+      try { localStorage.setItem('coffeeit:design:v1', id); } catch (e) {}
+    }
+  }
+  try {
+    const savedDesign = localStorage.getItem('coffeeit:design:v1');
+    if (savedDesign) document.documentElement.setAttribute('data-design', savedDesign);
+  } catch (e) {}
+
+  function openDesignsModal() {
+    const cur = document.documentElement.getAttribute('data-design') || 'default';
+    openModal({
+      title: '10 современных дизайнов CoffeeIT',
+      body: `
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <p class="small muted">Нажмите на любой дизайн — он <b>мгновенно применится</b> ко всему сайту с плавными анимациями. Подходит для iPhone, Android и планшетов.</p>
+          <div class="design-grid">
+            ${DESIGNS.map(d => `
+              <button type="button" class="design-tile ${cur === d.id ? 'active' : ''}" data-pick-design="${d.id}">
+                <span class="design-swatch" style="background:${d.swatch}"></span>
+                <b style="font-size:13.5px">${UI.esc(d.name)}</b>
+                <span class="small muted" style="font-size:12px;line-height:1.35">${UI.esc(d.desc)}</span>
+              </button>`).join('')}
+          </div>
+          <button type="button" class="btn btn-sm" data-pick-design="default">Вернуть стандартный дизайн</button>
+        </div>`,
+      onMount: (root, close) => {
+        root.querySelectorAll('[data-pick-design]').forEach((btn) => {
+          btn.onclick = () => {
+            const id = btn.dataset.pickDesign;
+            applyDesign(id);
+            const found = DESIGNS.find(x => x.id === id);
+            toast(found ? `Применён дизайн: ${found.name}` : 'Возвращён стандартный дизайн');
+            close();
+          };
+        });
+      },
+    });
+  }
+
   document.addEventListener('click', async (e) => {
+    const desBtn = e.target.closest('[data-open-designs]');
+    if (desBtn) {
+      e.preventDefault();
+      openDesignsModal();
+      return;
+    }
+
     const supBtn = e.target.closest('[data-support-project]');
     if (supBtn) {
       e.preventDefault();
