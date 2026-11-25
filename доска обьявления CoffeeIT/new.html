@@ -432,6 +432,17 @@ html[data-design="bento"]{--bg:#f2f2f2;--bg2:#e6e6e6;--card:#ffffff;--text:#1111
 html[data-design="emerald"]{--bg:#061612;--bg2:#0d261f;--card:#0a1f19;--text:#ecfdf5;--muted:#86b8a6;--border:rgba(245,197,66,.22);--primary:#10b981;--primary-h:#059669;--primary-soft:rgba(16,185,129,.16);--radius:18px;--shadow:0 14px 36px rgba(0,0,0,.45)}
 html[data-design="emerald"] .hero{background:linear-gradient(135deg,#0a261d,#061612 60%,rgba(245,197,66,.16));border:1px solid rgba(245,197,66,.28)}
 
+/* 11. Open-Design: Cafe (из nexu-io/open-design/design-systems/cafe) */
+html[data-design="od-cafe"]{--bg:#f9f7f5;--bg2:#e9e3dd;--card:#ffffff;--text:#3e2b1e;--muted:#7a6556;--border:#dfd6cc;--primary:#5d4432;--primary-h:#463224;--primary-soft:rgba(93,68,50,.11);--radius:20px;--shadow:0 10px 28px rgba(62,43,30,.08)}
+
+/* 12. Open-Design: Claymorphism (объёмный 3D-пластилин) */
+html[data-design="od-clay"]{--bg:#eef2ff;--bg2:#e0e7ff;--card:#ffffff;--text:#1e1b4b;--muted:#6366f1;--border:rgba(255,255,255,.9);--primary:#4f46e5;--primary-h:#4338ca;--primary-soft:rgba(79,70,229,.12);--radius:26px}
+html[data-design="od-clay"] .card,html[data-design="od-clay"] .ad-card{box-shadow:10px 10px 24px rgba(79,70,229,.12), -6px -6px 18px rgba(255,255,255,.95), inset 2px 2px 4px rgba(255,255,255,.8)}
+
+/* 13. Open-Design: Arc Browser (градиентное стекло) */
+html[data-design="od-arc"]{--bg:#0f1021;--bg2:#181a33;--card:rgba(26,29,56,.78);--text:#f8fafc;--muted:#94a3b8;--border:rgba(167,139,250,.22);--primary:#a78bfa;--primary-h:#8b5cf6;--primary-soft:rgba(167,139,250,.16);--radius:22px}
+html[data-design="od-arc"] .header,html[data-design="od-arc"] .card,html[data-design="od-arc"] .ad-card{backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px)}
+
 .design-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 @media (max-width:520px){.design-grid{grid-template-columns:1fr}}
 .design-tile{
@@ -442,23 +453,113 @@ html[data-design="emerald"] .hero{background:linear-gradient(135deg,#0a261d,#061
 .design-tile.active{border-color:var(--primary);box-shadow:0 0 0 2px var(--primary-soft)}
 .design-swatch{height:28px;border-radius:8px;width:100%}
 
-/* ---- Open-Codesign craft animations & elevation (default) ---- */
-.header{backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);background:color-mix(in srgb,var(--bg) 84%,transparent)}
-.hero{
-  background:radial-gradient(circle at 85% 15%,var(--primary-soft),transparent 55%),var(--card);
-  border:1px solid var(--border);box-shadow:var(--shadow);
-  transition:transform .25s cubic-bezier(.22,1,.36,1),box-shadow .25s ease;
+/* ---- Flagship Digital Agency Design System (Awwwards / Cuberto / Redmadrobot level) ---- */
+@keyframes auroraShift{
+  0%,100%{background-position:0% 50%}
+  50%{background-position:100% 50%}
 }
+@keyframes btnSheen{
+  0%{transform:translateX(-120%) skewX(-20deg)}
+  100%{transform:translateX(220%) skewX(-20deg)}
+}
+
+body{
+  font-family:"Plus Jakarta Sans","Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  background-image:
+    radial-gradient(at 12% 0%, rgba(201,100,66,.08) 0px, transparent 48%),
+    radial-gradient(at 88% 8%, rgba(184,134,42,.07) 0px, transparent 45%);
+  background-attachment:fixed;
+}
+
+.header{
+  backdrop-filter:blur(22px) saturate(160%);
+  -webkit-backdrop-filter:blur(22px) saturate(160%);
+  background:color-mix(in srgb,var(--bg) 78%,transparent);
+  border-bottom:1px solid color-mix(in srgb,var(--border) 75%,transparent);
+  box-shadow:0 4px 24px rgba(31,29,24,.04);
+}
+
+.logo .coin{
+  background:linear-gradient(135deg,var(--primary) 0%,#e07a5f 55%,#b8862a 100%);
+  box-shadow:0 6px 18px rgba(201,100,66,.32);
+}
+
+.hero{
+  position:relative;overflow:hidden;
+  border-radius:24px;
+  padding:36px 32px;
+  background:
+    radial-gradient(circle at 90% 10%, rgba(201,100,66,.22) 0%, transparent 45%),
+    radial-gradient(circle at 10% 90%, rgba(184,134,42,.16) 0%, transparent 45%),
+    linear-gradient(135deg, var(--card) 0%, color-mix(in srgb,var(--bg2) 65%,var(--card)) 100%);
+  border:1px solid color-mix(in srgb,var(--primary) 22%,var(--border));
+  box-shadow:0 20px 50px rgba(31,29,24,.07), 0 1px 2px rgba(31,29,24,.04);
+}
+.hero h1{
+  font-size:clamp(26px, 3.8vw, 42px);
+  font-weight:800;
+  letter-spacing:-0.035em;
+  line-height:1.12;
+}
+.hero p{font-size:clamp(14.5px, 1.4vw, 16.5px);max-width:640px;line-height:1.6}
+
 .ad-card{
-  transition:transform .24s cubic-bezier(.22,1,.36,1),box-shadow .24s ease,border-color .24s ease;
+  border-radius:20px;
+  border:1px solid color-mix(in srgb,var(--border) 85%,transparent);
+  box-shadow:0 2px 6px rgba(31,29,24,.04), 0 10px 26px rgba(31,29,24,.04);
+  transition:transform .32s cubic-bezier(.22,1,.36,1), box-shadow .32s cubic-bezier(.22,1,.36,1), border-color .25s ease;
 }
 .ad-card:hover{
-  transform:translateY(-4px);
-  box-shadow:0 12px 28px rgba(31,29,24,.10);
-  border-color:color-mix(in srgb,var(--primary) 40%,var(--border));
+  transform:translateY(-6px);
+  box-shadow:0 22px 44px rgba(31,29,24,.11), 0 4px 12px rgba(201,100,66,.08);
+  border-color:color-mix(in srgb,var(--primary) 45%,var(--border));
 }
-.btn{transition:transform .14s cubic-bezier(.22,1,.36,1),background-color .16s ease,border-color .16s ease,box-shadow .16s ease}
-.btn:active{transform:scale(.97)}
+.ad-thumb{overflow:hidden;border-radius:16px 16px 0 0}
+.ad-thumb img{transition:transform .55s cubic-bezier(.22,1,.36,1)}
+.ad-card:hover .ad-thumb img{transform:scale(1.06)}
+.ad-price{font-variant-numeric:tabular-nums;letter-spacing:-0.02em;font-weight:800}
+
+.btn{
+  position:relative;overflow:hidden;
+  border-radius:12px;
+  font-weight:600;
+  letter-spacing:-0.01em;
+  transition:transform .16s cubic-bezier(.22,1,.36,1), background-color .2s ease, border-color .2s ease, box-shadow .22s ease;
+}
+.btn:active{transform:scale(.96)}
+.btn-primary{
+  background:linear-gradient(135deg,var(--primary) 0%,var(--primary-h) 100%);
+  box-shadow:0 8px 20px rgba(201,100,66,.26);
+}
+.btn-primary:hover{
+  box-shadow:0 12px 28px rgba(201,100,66,.36);
+  transform:translateY(-1px);
+}
+.btn-primary::after{
+  content:"";position:absolute;inset:0;width:45%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.28),transparent);
+  transform:translateX(-140%) skewX(-20deg);
+  pointer-events:none;
+}
+.btn-primary:hover::after{animation:btnSheen .75s ease}
+
+.card{
+  border-radius:20px;
+  box-shadow:0 2px 8px rgba(31,29,24,.04), 0 12px 30px rgba(31,29,24,.04);
+}
+.modal{
+  border-radius:24px;
+  box-shadow:0 30px 80px rgba(0,0,0,.28);
+  border:1px solid color-mix(in srgb,var(--border) 70%,transparent);
+}
+
+@media (max-width:640px){
+  .hero{padding:22px 16px;border-radius:18px}
+  .ad-card{border-radius:16px}
+  .card{border-radius:16px}
+}
 
 </style>
 <script>
@@ -3431,6 +3532,9 @@ if (typeof window.EventSource === 'function') {
     { id: 'telegram', name: '8. Telegram Breeze', desc: 'Воздушный небесно-голубой мобильный стиль', swatch: 'linear-gradient(135deg,#f0f7fc,#229ed9)' },
     { id: 'bento', name: '9. Bento Minimal', desc: 'Модульная швейцарская сетка + сигнальный оранжевый', swatch: 'linear-gradient(135deg,#f2f2f2,#ff4d00)' },
     { id: 'emerald', name: '10. Emerald Fintech', desc: 'Тёмный изумруд и золото в стиле премиального финтеха', swatch: 'linear-gradient(135deg,#061612,#10b981,#f5c542)' },
+    { id: 'od-cafe', name: '11. Open-Design: Cafe', desc: 'Уютная кофейная дизайн-система из nexu-io/open-design (#5D4432)', swatch: 'linear-gradient(135deg,#f9f7f5,#5d4432,#3e2b1e)' },
+    { id: 'od-clay', name: '12. Open-Design: Clay 3D', desc: 'Объёмный 3D Claymorphism с мягкими двойными тенями', swatch: 'linear-gradient(135deg,#eef2ff,#4f46e5,#818cf8)' },
+    { id: 'od-arc', name: '13. Open-Design: Arc Glass', desc: 'Космическое стекло с сиреневым свечением (стиль Arc)', swatch: 'linear-gradient(135deg,#0f1021,#a78bfa,#38bdf8)' },
   ];
 
   function applyDesign(id) {

@@ -417,6 +417,17 @@ html[data-design="bento"]{--bg:#f2f2f2;--bg2:#e6e6e6;--card:#ffffff;--text:#1111
 html[data-design="emerald"]{--bg:#061612;--bg2:#0d261f;--card:#0a1f19;--text:#ecfdf5;--muted:#86b8a6;--border:rgba(245,197,66,.22);--primary:#10b981;--primary-h:#059669;--primary-soft:rgba(16,185,129,.16);--radius:18px;--shadow:0 14px 36px rgba(0,0,0,.45)}
 html[data-design="emerald"] .hero{background:linear-gradient(135deg,#0a261d,#061612 60%,rgba(245,197,66,.16));border:1px solid rgba(245,197,66,.28)}
 
+/* 11. Open-Design: Cafe (из nexu-io/open-design/design-systems/cafe) */
+html[data-design="od-cafe"]{--bg:#f9f7f5;--bg2:#e9e3dd;--card:#ffffff;--text:#3e2b1e;--muted:#7a6556;--border:#dfd6cc;--primary:#5d4432;--primary-h:#463224;--primary-soft:rgba(93,68,50,.11);--radius:20px;--shadow:0 10px 28px rgba(62,43,30,.08)}
+
+/* 12. Open-Design: Claymorphism (объёмный 3D-пластилин) */
+html[data-design="od-clay"]{--bg:#eef2ff;--bg2:#e0e7ff;--card:#ffffff;--text:#1e1b4b;--muted:#6366f1;--border:rgba(255,255,255,.9);--primary:#4f46e5;--primary-h:#4338ca;--primary-soft:rgba(79,70,229,.12);--radius:26px}
+html[data-design="od-clay"] .card,html[data-design="od-clay"] .ad-card{box-shadow:10px 10px 24px rgba(79,70,229,.12), -6px -6px 18px rgba(255,255,255,.95), inset 2px 2px 4px rgba(255,255,255,.8)}
+
+/* 13. Open-Design: Arc Browser (градиентное стекло) */
+html[data-design="od-arc"]{--bg:#0f1021;--bg2:#181a33;--card:rgba(26,29,56,.78);--text:#f8fafc;--muted:#94a3b8;--border:rgba(167,139,250,.22);--primary:#a78bfa;--primary-h:#8b5cf6;--primary-soft:rgba(167,139,250,.16);--radius:22px}
+html[data-design="od-arc"] .header,html[data-design="od-arc"] .card,html[data-design="od-arc"] .ad-card{backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px)}
+
 .design-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 @media (max-width:520px){.design-grid{grid-template-columns:1fr}}
 .design-tile{
