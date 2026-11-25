@@ -1226,6 +1226,9 @@
     { id: 'telegram', name: '8. Telegram Breeze', desc: 'Воздушный небесно-голубой мобильный стиль', swatch: 'linear-gradient(135deg,#f0f7fc,#229ed9)' },
     { id: 'bento', name: '9. Bento Minimal', desc: 'Модульная швейцарская сетка + сигнальный оранжевый', swatch: 'linear-gradient(135deg,#f2f2f2,#ff4d00)' },
     { id: 'emerald', name: '10. Emerald Fintech', desc: 'Тёмный изумруд и золото в стиле премиального финтеха', swatch: 'linear-gradient(135deg,#061612,#10b981,#f5c542)' },
+    { id: 'od-cafe', name: '11. Open-Design: Cafe', desc: 'Уютная кофейная дизайн-система из nexu-io/open-design (#5D4432)', swatch: 'linear-gradient(135deg,#f9f7f5,#5d4432,#3e2b1e)' },
+    { id: 'od-clay', name: '12. Open-Design: Clay 3D', desc: 'Объёмный 3D Claymorphism с мягкими двойными тенями', swatch: 'linear-gradient(135deg,#eef2ff,#4f46e5,#818cf8)' },
+    { id: 'od-arc', name: '13. Open-Design: Arc Glass', desc: 'Космическое стекло с сиреневым свечением (стиль Arc)', swatch: 'linear-gradient(135deg,#0f1021,#a78bfa,#38bdf8)' },
   ];
 
   function applyDesign(id) {
